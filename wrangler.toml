@@ -1,0 +1,17 @@
+# Cloudflare Workers config for the Nuxt site.
+# `nuxt build` (preset: cloudflare_module) produces:
+#   .output/server/index.mjs  -> the Worker entry (SSR)
+#   .output/public/           -> static assets, served via the ASSETS binding
+#
+# Deploy:  npm run build && npx wrangler deploy
+# Or connect the repo in the Cloudflare dashboard (Workers > Builds) and it
+# will run the build command + wrangler deploy automatically using this file.
+
+name = "myportfolio"
+main = "./.output/server/index.mjs"
+compatibility_date = "2025-06-01"
+compatibility_flags = ["nodejs_compat"]
+
+[assets]
+binding = "ASSETS"
+directory = "./.output/public/"

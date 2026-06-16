@@ -5,6 +5,13 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-06-01',
   devtools: { enabled: true },
 
+  // Deploy target: Cloudflare Workers (module syntax, with Workers Static
+  // Assets). `nuxt build` emits .output/server/index.mjs (the worker) and
+  // .output/public (static assets) — both wired up in wrangler.toml.
+  nitro: {
+    preset: 'cloudflare_module',
+  },
+
   // Vuetify needs to be transpiled by Nuxt
   build: {
     transpile: ['vuetify'],
