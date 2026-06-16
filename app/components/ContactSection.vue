@@ -49,7 +49,7 @@ const year = new Date().getFullYear()
       <v-container style="max-width: 1080px" class="d-flex flex-wrap justify-space-between align-center ga-2 py-6">
         <span class="font-mono foot-text">
           <span class="text-amber">{{ '{' }}</span>{{ profile.initials }}<span class="text-amber">{{ '}' }}</span>
-          · {{ profile.name }}
+          · {{ t(profile.name) }}
         </span>
         <a class="font-mono foot-text foot-mail" :href="`mailto:${profile.email}`">
           <v-icon icon="mdi-email-outline" size="13" class="mr-1" />{{ profile.email }}

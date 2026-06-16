@@ -79,7 +79,7 @@ function scrollTo(id: string) {
           <p v-reveal="60" class="font-mono prompt greeting mb-2">whoami</p>
 
           <h1 v-reveal="120" class="hero-name">
-            {{ profile.name }}
+            {{ t(profile.name) }}
           </h1>
 
           <p v-reveal="180" class="font-mono hero-title prompt">
@@ -137,7 +137,7 @@ function scrollTo(id: string) {
               <v-img
                 v-if="!imgError"
                 :src="profile.photo"
-                :alt="profile.name"
+                :alt="t(profile.name)"
                 cover
                 @error="imgError = true"
               />

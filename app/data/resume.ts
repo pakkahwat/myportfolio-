@@ -57,12 +57,11 @@ export interface Contact {
 }
 
 export const profile = {
-  name: 'Pakkahwat Chuesaard',
+  // The person's name in each language (not a translation — the real Thai name).
+  name: { en: 'Pakkahwat Chuesaard', th: 'ภควัต เชื้อสะอาด' } as Localized,
   initials: 'PC',
-  title: {
-    en: 'Software Engineer · Full-Stack & Production Systems',
-    th: 'วิศวกรซอฟต์แวร์ · Full-Stack & ระบบ Production',
-  } as Localized,
+  // Job title — kept in English (a job position, not translated).
+  title: 'Software Engineer · Full-Stack & Production Systems' as Localized,
   location: 'Ayutthaya, Thailand',
   focus: 'Full-Stack · PHP · Vue · Oracle ERP',
   email: 'pakkahwat.contact@gmail.com',
@@ -70,19 +69,19 @@ export const profile = {
   photo: '/profile.jpg',
 }
 
-// Phrases cycled by the Hero typewriter (type → hold → delete → next → loop).
+// Phrases cycled by the Hero typewriter — skill/role phrases, kept in English.
 export const roles: Localized[] = [
   profile.title,
-  { en: 'Database Engineering & Optimization', th: 'วิศวกรรมและเพิ่มประสิทธิภาพฐานข้อมูล' },
-  { en: 'Production Troubleshooting & Root Cause Analysis', th: 'แก้ปัญหาระบบ Production & วิเคราะห์ต้นเหตุ' },
-  { en: 'Backend Developer · PHP · JS · SQL', th: 'นักพัฒนา Backend · PHP · JS · SQL' },
-  { en: 'Frontend Developer · Vue · Nuxt.js', th: 'นักพัฒนา Frontend · Vue · Nuxt.js' },
-  { en: 'Oracle ERP Integration & APIs', th: 'เชื่อมต่อ Oracle ERP & APIs' },
+  'Database Engineering & Optimization',
+  'Production Troubleshooting & Root Cause Analysis',
+  'Backend Developer · PHP · JS · SQL',
+  'Frontend Developer · Vue · Nuxt.js',
+  'Oracle ERP Integration & APIs',
 ]
 
 export const summary: Localized = {
   en: 'Software Engineer with 5 years of experience spanning full-stack development and technical support. Specializes in production troubleshooting, database optimization, and mission-critical system maintenance — cutting incident resolution from hours to minutes through direct database intervention and real-time root cause analysis. Operates across finance and pawnshop industries with deep ownership of multiple concurrent production systems.',
-  th: 'วิศวกรซอฟต์แวร์ประสบการณ์ 5 ปี ครอบคลุมงานพัฒนา full-stack และ technical support เชี่ยวชาญการแก้ปัญหาระบบ production การเพิ่มประสิทธิภาพฐานข้อมูล และการดูแลระบบที่สำคัญต่อธุรกิจ — ลดเวลาแก้ไขเหตุการณ์จากหลักชั่วโมงเหลือหลักนาที ด้วยการเข้าแก้ที่ฐานข้อมูลโดยตรงและวิเคราะห์ต้นเหตุแบบเรียลไทม์ ดูแลระบบ production หลายตัวพร้อมกันในอุตสาหกรรมการเงินและโรงรับจำนำ',
+  th: 'Software Engineer ประสบการณ์ 5 ปี ครอบคลุมงานพัฒนา full-stack และ technical support เชี่ยวชาญการแก้ปัญหาระบบ production การเพิ่มประสิทธิภาพฐานข้อมูล และการดูแลระบบที่สำคัญต่อธุรกิจ — ลดเวลาแก้ไขเหตุการณ์จากหลักชั่วโมงเหลือหลักนาที ด้วยการเข้าแก้ที่ฐานข้อมูลโดยตรงและวิเคราะห์ต้นเหตุแบบเรียลไทม์ ดูแลระบบ production หลายตัวพร้อมกันในอุตสาหกรรมการเงินและโรงรับจำนำ',
 }
 
 export const kpis: Kpi[] = [
@@ -92,37 +91,13 @@ export const kpis: Kpi[] = [
   { value: 'hrs→min', label: { en: 'Incident Time', th: 'เวลาแก้เหตุ' } },
 ]
 
+// Skill names / sub-labels / levels are technical terms — kept in English.
 export const skills: Skill[] = [
-  {
-    name: { en: 'Database Engineering', th: 'วิศวกรรมฐานข้อมูล' },
-    sub: { en: '& Optimization', th: '& เพิ่มประสิทธิภาพ' },
-    level: { en: 'Expert', th: 'เชี่ยวชาญ' },
-    value: 95,
-  },
-  {
-    name: { en: 'Prod Troubleshooting', th: 'แก้ปัญหา Production' },
-    sub: { en: '& Root Cause Analysis', th: '& วิเคราะห์ต้นเหตุ' },
-    level: { en: 'Advanced', th: 'ขั้นสูง' },
-    value: 88,
-  },
-  {
-    name: { en: 'Backend Development', th: 'พัฒนา Backend' },
-    sub: 'PHP · JS · SQL',
-    level: { en: 'Advanced', th: 'ขั้นสูง' },
-    value: 85,
-  },
-  {
-    name: { en: 'Frontend Development', th: 'พัฒนา Frontend' },
-    sub: 'Vue · Nuxt.js · jQuery',
-    level: { en: 'Advanced', th: 'ขั้นสูง' },
-    value: 82,
-  },
-  {
-    name: { en: 'ERP Integration', th: 'เชื่อมต่อ ERP' },
-    sub: { en: '& API Development', th: '& พัฒนา API' },
-    level: { en: 'Proficient', th: 'ชำนาญ' },
-    value: 70,
-  },
+  { name: 'Database Engineering', sub: '& Optimization', level: 'Expert', value: 95 },
+  { name: 'Prod Troubleshooting', sub: '& Root Cause Analysis', level: 'Advanced', value: 88 },
+  { name: 'Backend Development', sub: 'PHP · JS · SQL', level: 'Advanced', value: 85 },
+  { name: 'Frontend Development', sub: 'Vue · Nuxt.js · jQuery', level: 'Advanced', value: 82 },
+  { name: 'ERP Integration', sub: '& API Development', level: 'Proficient', value: 70 },
 ]
 
 export const techStack: string[] = [
@@ -181,7 +156,7 @@ export const stories: Story[] = [
 
 export const jobs: Job[] = [
   {
-    role: { en: 'Software Engineer', th: 'วิศวกรซอฟต์แวร์' },
+    role: 'Software Engineer',
     company: 'Tungthanasin Group (Easy Money)',
     period: { en: '2023 – Present', th: '2023 – ปัจจุบัน' },
     current: true,
@@ -209,7 +184,7 @@ export const jobs: Job[] = [
     ],
   },
   {
-    role: { en: 'Backend Developer / IT Programmer', th: 'นักพัฒนา Backend / โปรแกรมเมอร์ IT' },
+    role: 'Backend Developer / IT Programmer',
     company: 'AdaSoft',
     period: '2021 – 2023',
     bullets: [
@@ -228,7 +203,7 @@ export const jobs: Job[] = [
     ],
   },
   {
-    role: { en: 'PHP Programmer', th: 'โปรแกรมเมอร์ PHP' },
+    role: 'PHP Programmer',
     company: 'Oranoss Co., Ltd.',
     period: '2020 – 2021',
     bullets: [
@@ -243,7 +218,7 @@ export const jobs: Job[] = [
     ],
   },
   {
-    role: { en: 'Internship Programmer', th: 'นักศึกษาฝึกงาน (Programmer)' },
+    role: 'Internship Programmer',
     company: 'JobBKK.com',
     period: '2019 – 2020',
     bullets: [
