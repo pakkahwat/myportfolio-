@@ -1,15 +1,23 @@
 <script setup lang="ts">
-// Lightweight constellation field behind the hero. Particles drift slowly and
-// link to nearby neighbours; the cursor adds a brighter "gravity" node that
-// pulls and lights up the network around it. Pure canvas, no deps. Disabled
-// under prefers-reduced-motion (renders nothing — the static grid stays).
+// Constellation field behind the hero. Particles drift slowly and link to
+// nearby neighbours. When the cursor is present it pulls nearby particles in
+// (accelerating as they get closer); once one reaches the pointer it fades out
+// and respawns elsewhere — so the field streams *into* the cursor and vanishes
+// instead of collapsing into a permanent clump. The pool size is fixed, which
+// caps how many particles can ever be on screen. Disabled under
+// prefers-reduced-motion (renders nothing — the static grid stays).
 const canvas = ref<HTMLCanvasElement>()
 let raf = 0
 let cleanup: (() => void) | null = null
 
-// x/y/vx/vy are the steady drift state; dx/dy are the rendered positions
-// (drift + a temporary push away from the cursor).
-interface P { x: number; y: number; vx: number; vy: number; dx: number; dy: number }
+interface P {
+  x: number
+  y: number
+  vx: number
+  vy: number
+  alpha: number // 0 = invisible; fades in on spawn, out when consumed
+  fading: boolean // true once it has reached the cursor
+}
 
 onMounted(() => {
   const el = canvas.value
@@ -24,6 +32,28 @@ onMounted(() => {
   const mouse = { x: -9999, y: -9999, active: false }
   let points: P[] = []
 
+  const ATTRACT = 200 // cursor influence radius
+  const CONSUME = 14 // within this, the particle is "absorbed" and fades out
+
+  // (Re)place a particle at a random spot, biased away from the cursor so it
+  // fades in and drifts before being pulled back in. Resets its drift + life.
+  const respawn = (p: P) => {
+    let x = 0
+    let y = 0
+    let tries = 0
+    do {
+      x = Math.random() * w
+      y = Math.random() * h
+      tries++
+    } while (mouse.active && Math.hypot(x - mouse.x, y - mouse.y) < 110 && tries < 8)
+    p.x = x
+    p.y = y
+    p.vx = (Math.random() - 0.5) * 0.25
+    p.vy = (Math.random() - 0.5) * 0.25
+    p.alpha = 0
+    p.fading = false
+  }
+
   const resize = () => {
     const r = parent.getBoundingClientRect()
     w = r.width
@@ -34,19 +64,14 @@ onMounted(() => {
     el.style.width = `${w}px`
     el.style.height = `${h}px`
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-    // density scales with area, capped so big screens stay cheap
-    const count = Math.min(90, Math.round((w * h) / 16000))
+    // Fixed pool: density scales with area, hard-capped so the screen never
+    // gets cluttered no matter how large the viewport.
+    const count = Math.min(80, Math.round((w * h) / 17000))
     points = Array.from({ length: count }, () => {
-      const x = Math.random() * w
-      const y = Math.random() * h
-      return {
-        x,
-        y,
-        vx: (Math.random() - 0.5) * 0.25,
-        vy: (Math.random() - 0.5) * 0.25,
-        dx: x,
-        dy: y,
-      }
+      const p: P = { x: 0, y: 0, vx: 0, vy: 0, alpha: 0, fading: false }
+      respawn(p)
+      p.alpha = Math.random() // stagger initial fade-in so they don't pop in together
+      return p
     })
   }
 
@@ -64,12 +89,9 @@ onMounted(() => {
   const draw = () => {
     ctx.clearRect(0, 0, w, h)
     const LINK = 130
-    const REPEL = 150 // cursor influence radius
-    const PUSH = 38 // max px a particle is shoved out of the way
 
     for (const p of points) {
-      // Steady drift + wall bounce. The cursor never touches this base state,
-      // so the field can't collapse onto a stationary pointer.
+      // steady drift + wall bounce keeps the field alive
       p.x += p.vx
       p.y += p.vy
       if (p.x <= 0 || p.x >= w) p.vx *= -1
@@ -77,24 +99,31 @@ onMounted(() => {
       p.x = Math.max(0, Math.min(w, p.x))
       p.y = Math.max(0, Math.min(h, p.y))
 
-      // Render position = drift pushed *away* from the cursor, springing back
-      // to the drift position as the cursor moves off.
-      p.dx = p.x
-      p.dy = p.y
+      // cursor attraction: a proximity-weighted lerp toward the pointer, so
+      // particles accelerate as they close in (no velocity build-up / overshoot)
       if (mouse.active) {
-        const ox = p.x - mouse.x
-        const oy = p.y - mouse.y
-        const dist = Math.hypot(ox, oy) || 1
-        if (dist < REPEL) {
-          const push = (1 - dist / REPEL) * PUSH
-          p.dx = p.x + (ox / dist) * push
-          p.dy = p.y + (oy / dist) * push
+        const dx = mouse.x - p.x
+        const dy = mouse.y - p.y
+        const d = Math.hypot(dx, dy)
+        if (d < ATTRACT) {
+          const pull = 0.012 + 0.06 * (1 - d / ATTRACT)
+          p.x += dx * pull
+          p.y += dy * pull
+          if (d < CONSUME && p.alpha > 0.3) p.fading = true
         }
       }
 
+      // life cycle: fade out when consumed (then respawn), else fade in
+      if (p.fading) {
+        p.alpha -= 0.06
+        if (p.alpha <= 0) respawn(p)
+      } else if (p.alpha < 1) {
+        p.alpha = Math.min(1, p.alpha + 0.02)
+      }
+
       ctx.beginPath()
-      ctx.arc(p.dx, p.dy, 1.4, 0, Math.PI * 2)
-      ctx.fillStyle = 'rgba(245, 166, 35, 0.55)'
+      ctx.arc(p.x, p.y, 1.4, 0, Math.PI * 2)
+      ctx.fillStyle = `rgba(245, 166, 35, ${0.6 * p.alpha})`
       ctx.fill()
     }
 
@@ -102,26 +131,27 @@ onMounted(() => {
       const a = points[i]!
       for (let j = i + 1; j < points.length; j++) {
         const b = points[j]!
-        const dx = a.dx - b.dx
-        const dy = a.dy - b.dy
+        const dx = a.x - b.x
+        const dy = a.y - b.y
         const dist = Math.hypot(dx, dy)
         if (dist < LINK) {
+          const o = 0.12 * (1 - dist / LINK) * Math.min(a.alpha, b.alpha)
           ctx.beginPath()
-          ctx.moveTo(a.dx, a.dy)
-          ctx.lineTo(b.dx, b.dy)
-          ctx.strokeStyle = `rgba(139, 148, 158, ${0.12 * (1 - dist / LINK)})`
+          ctx.moveTo(a.x, a.y)
+          ctx.lineTo(b.x, b.y)
+          ctx.strokeStyle = `rgba(139, 148, 158, ${o})`
           ctx.lineWidth = 1
           ctx.stroke()
         }
       }
       // brighter links to the cursor node
       if (mouse.active) {
-        const dist = Math.hypot(a.dx - mouse.x, a.dy - mouse.y)
-        if (dist < 200) {
+        const dist = Math.hypot(a.x - mouse.x, a.y - mouse.y)
+        if (dist < ATTRACT) {
           ctx.beginPath()
-          ctx.moveTo(a.dx, a.dy)
+          ctx.moveTo(a.x, a.y)
           ctx.lineTo(mouse.x, mouse.y)
-          ctx.strokeStyle = `rgba(245, 166, 35, ${0.35 * (1 - dist / 200)})`
+          ctx.strokeStyle = `rgba(245, 166, 35, ${0.3 * (1 - dist / ATTRACT) * a.alpha})`
           ctx.lineWidth = 1
           ctx.stroke()
         }
