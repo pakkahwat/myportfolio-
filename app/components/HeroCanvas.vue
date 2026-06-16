@@ -7,7 +7,9 @@ const canvas = ref<HTMLCanvasElement>()
 let raf = 0
 let cleanup: (() => void) | null = null
 
-interface P { x: number; y: number; vx: number; vy: number }
+// x/y/vx/vy are the steady drift state; dx/dy are the rendered positions
+// (drift + a temporary push away from the cursor).
+interface P { x: number; y: number; vx: number; vy: number; dx: number; dy: number }
 
 onMounted(() => {
   const el = canvas.value
@@ -34,12 +36,18 @@ onMounted(() => {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
     // density scales with area, capped so big screens stay cheap
     const count = Math.min(90, Math.round((w * h) / 16000))
-    points = Array.from({ length: count }, () => ({
-      x: Math.random() * w,
-      y: Math.random() * h,
-      vx: (Math.random() - 0.5) * 0.25,
-      vy: (Math.random() - 0.5) * 0.25,
-    }))
+    points = Array.from({ length: count }, () => {
+      const x = Math.random() * w
+      const y = Math.random() * h
+      return {
+        x,
+        y,
+        vx: (Math.random() - 0.5) * 0.25,
+        vy: (Math.random() - 0.5) * 0.25,
+        dx: x,
+        dy: y,
+      }
+    })
   }
 
   const onMove = (e: MouseEvent) => {
@@ -56,29 +64,36 @@ onMounted(() => {
   const draw = () => {
     ctx.clearRect(0, 0, w, h)
     const LINK = 130
+    const REPEL = 150 // cursor influence radius
+    const PUSH = 38 // max px a particle is shoved out of the way
+
     for (const p of points) {
-      // cursor gravity
-      if (mouse.active) {
-        const dx = mouse.x - p.x
-        const dy = mouse.y - p.y
-        const d2 = dx * dx + dy * dy
-        if (d2 < 200 * 200) {
-          const f = 0.00018
-          p.vx += dx * f
-          p.vy += dy * f
-        }
-      }
+      // Steady drift + wall bounce. The cursor never touches this base state,
+      // so the field can't collapse onto a stationary pointer.
       p.x += p.vx
       p.y += p.vy
-      p.vx *= 0.99
-      p.vy *= 0.99
-      if (p.x < 0 || p.x > w) p.vx *= -1
-      if (p.y < 0 || p.y > h) p.vy *= -1
+      if (p.x <= 0 || p.x >= w) p.vx *= -1
+      if (p.y <= 0 || p.y >= h) p.vy *= -1
       p.x = Math.max(0, Math.min(w, p.x))
       p.y = Math.max(0, Math.min(h, p.y))
 
+      // Render position = drift pushed *away* from the cursor, springing back
+      // to the drift position as the cursor moves off.
+      p.dx = p.x
+      p.dy = p.y
+      if (mouse.active) {
+        const ox = p.x - mouse.x
+        const oy = p.y - mouse.y
+        const dist = Math.hypot(ox, oy) || 1
+        if (dist < REPEL) {
+          const push = (1 - dist / REPEL) * PUSH
+          p.dx = p.x + (ox / dist) * push
+          p.dy = p.y + (oy / dist) * push
+        }
+      }
+
       ctx.beginPath()
-      ctx.arc(p.x, p.y, 1.4, 0, Math.PI * 2)
+      ctx.arc(p.dx, p.dy, 1.4, 0, Math.PI * 2)
       ctx.fillStyle = 'rgba(245, 166, 35, 0.55)'
       ctx.fill()
     }
@@ -87,13 +102,13 @@ onMounted(() => {
       const a = points[i]!
       for (let j = i + 1; j < points.length; j++) {
         const b = points[j]!
-        const dx = a.x - b.x
-        const dy = a.y - b.y
+        const dx = a.dx - b.dx
+        const dy = a.dy - b.dy
         const dist = Math.hypot(dx, dy)
         if (dist < LINK) {
           ctx.beginPath()
-          ctx.moveTo(a.x, a.y)
-          ctx.lineTo(b.x, b.y)
+          ctx.moveTo(a.dx, a.dy)
+          ctx.lineTo(b.dx, b.dy)
           ctx.strokeStyle = `rgba(139, 148, 158, ${0.12 * (1 - dist / LINK)})`
           ctx.lineWidth = 1
           ctx.stroke()
@@ -101,10 +116,10 @@ onMounted(() => {
       }
       // brighter links to the cursor node
       if (mouse.active) {
-        const dist = Math.hypot(a.x - mouse.x, a.y - mouse.y)
+        const dist = Math.hypot(a.dx - mouse.x, a.dy - mouse.y)
         if (dist < 200) {
           ctx.beginPath()
-          ctx.moveTo(a.x, a.y)
+          ctx.moveTo(a.dx, a.dy)
           ctx.lineTo(mouse.x, mouse.y)
           ctx.strokeStyle = `rgba(245, 166, 35, ${0.35 * (1 - dist / 200)})`
           ctx.lineWidth = 1

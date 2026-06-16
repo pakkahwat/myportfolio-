@@ -1,30 +1,56 @@
 <script setup lang="ts">
-import { profile, kpis } from '~/data/resume'
+import { profile, kpis, roles } from '~/data/resume'
 
 const imgError = ref(false)
 
-// Typewriter for the role line — types out once on mount, leaves a blinking
-// caret. Falls back to the full string under reduced motion.
+// Looping typewriter for the role line: types a phrase, holds, deletes it,
+// then moves to the next — cycling through `roles` forever. The caret stays
+// solid while typing/deleting and blinks during the holds. Falls back to the
+// static title under reduced motion.
 const typed = ref('')
-const typingDone = ref(false)
+const blink = ref(true)
+let timer: ReturnType<typeof setTimeout> | undefined
+
 onMounted(() => {
-  const full = profile.title
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    typed.value = full
-    typingDone.value = true
+    typed.value = profile.title
     return
   }
-  let i = 0
+  let phrase = 0
+  let char = 0
+  let deleting = false
+
   const tick = () => {
-    typed.value = full.slice(0, i)
-    if (i < full.length) {
-      i++
-      setTimeout(tick, 34)
+    const full = roles[phrase % roles.length]!
+    if (deleting) {
+      char--
+      typed.value = full.slice(0, char)
+      if (char === 0) {
+        deleting = false
+        phrase++
+        blink.value = true
+        timer = setTimeout(tick, 400) // pause before the next phrase
+      } else {
+        timer = setTimeout(tick, 28) // delete faster than typing
+      }
     } else {
-      typingDone.value = true
+      char++
+      typed.value = full.slice(0, char)
+      blink.value = false
+      if (char === full.length) {
+        deleting = true
+        blink.value = true
+        timer = setTimeout(tick, 1700) // hold the completed phrase
+      } else {
+        timer = setTimeout(tick, 55)
+      }
     }
   }
-  setTimeout(tick, 550)
+  timer = setTimeout(tick, 500)
+})
+
+onBeforeUnmount(() => {
+  if (timer) clearTimeout(timer)
 })
 
 function scrollTo(id: string) {
@@ -55,7 +81,7 @@ function scrollTo(id: string) {
           </h1>
 
           <p v-reveal="180" class="font-mono hero-title prompt">
-            {{ typed }}<span class="type-caret" :class="{ 'type-caret--blink': typingDone }" />
+            {{ typed }}<span class="type-caret" :class="{ 'type-caret--blink': blink }" />
           </p>
 
           <div v-reveal="240" class="d-flex flex-wrap ga-2 mt-5">

@@ -13,6 +13,13 @@ dist
 # Node dependencies
 node_modules
 
+# package-lock is intentionally not committed: npm prunes platform-specific
+# optional native bindings (oxc-parser, rollup, lightningcss, ...) from a
+# lockfile generated on one OS, so a Windows-generated lock breaks Linux CI
+# (`npm ci` -> missing @oxc-parser/binding-linux-x64-gnu, npm/cli#4828).
+# Without a lockfile, CI uses `npm install`, which resolves bindings per-OS.
+package-lock.json
+
 # Logs
 logs
 *.log

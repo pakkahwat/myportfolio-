@@ -61,6 +61,17 @@ export const profile = {
   photo: '/profile.jpg',
 }
 
+// Phrases cycled by the Hero typewriter (type → hold → delete → next → loop).
+// First entry is the primary title; the rest echo the core skills.
+export const roles: string[] = [
+  profile.title,
+  'Database Engineering & Optimization',
+  'Production Troubleshooting & Root Cause Analysis',
+  'Backend Developer · PHP · JS · SQL',
+  'Frontend Developer · Vue · Nuxt.js',
+  'Oracle ERP Integration & APIs',
+]
+
 export const summary =
   'Software Engineer with 5 years of experience spanning full-stack development and technical support. Specializes in production troubleshooting, database optimization, and mission-critical system maintenance — cutting incident resolution from hours to minutes through direct database intervention and real-time root cause analysis. Operates across finance and pawnshop industries with deep ownership of multiple concurrent production systems.'
 
