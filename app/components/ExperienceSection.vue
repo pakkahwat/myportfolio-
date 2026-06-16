@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { jobs } from '~/data/resume'
+
+const { t } = useT()
 </script>
 
 <template>
@@ -28,7 +30,7 @@ import { jobs } from '~/data/resume'
           <div v-reveal="i * 60" class="job">
             <div class="d-flex flex-wrap justify-space-between align-baseline ga-2">
               <div>
-                <div class="job-role">{{ job.role }}</div>
+                <div class="job-role">{{ t(job.role) }}</div>
                 <div class="job-co">{{ job.company }}</div>
               </div>
               <v-chip
@@ -37,12 +39,12 @@ import { jobs } from '~/data/resume'
                 :color="job.current ? 'primary' : undefined"
                 class="font-mono period-chip"
               >
-                {{ job.period }}
+                {{ t(job.period) }}
               </v-chip>
             </div>
 
             <ul class="bullets mt-3">
-              <li v-for="(b, bi) in job.bullets" :key="bi">{{ b }}</li>
+              <li v-for="(b, bi) in job.bullets" :key="bi">{{ t(b) }}</li>
             </ul>
           </div>
         </v-timeline-item>

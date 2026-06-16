@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { contacts, profile } from '~/data/resume'
+import { contacts, profile, ui } from '~/data/resume'
 
+const { t } = useT()
 const year = new Date().getFullYear()
 </script>
 
@@ -13,11 +14,11 @@ const year = new Date().getFullYear()
         <v-col cols="12" md="7">
           <p v-reveal class="font-mono prompt contact-prompt mb-2">echo $STATUS</p>
           <h2 v-reveal="80" class="contact-head mb-4">
-            Open to new challenges &amp;
-            <span class="text-amber">production-critical</span> work.
+            {{ t(ui.contactHead1) }}
+            <span class="text-amber">production-critical</span> {{ t(ui.contactHead2) }}
           </h2>
           <p v-reveal="140" class="contact-sub">
-            Have a system that needs building, fixing, or rescuing? Let's talk.
+            {{ t(ui.contactSub) }}
           </p>
         </v-col>
 
@@ -25,7 +26,7 @@ const year = new Date().getFullYear()
           <div class="d-flex flex-column ga-3">
             <a
               v-for="(c, i) in contacts"
-              :key="c.label"
+              :key="i"
               v-reveal="i * 70"
               :href="c.href"
               target="_blank"
@@ -34,7 +35,7 @@ const year = new Date().getFullYear()
             >
               <v-icon :icon="c.icon" color="primary" size="20" class="mr-3" />
               <div class="d-flex flex-column">
-                <span class="contact-label font-mono">{{ c.label }}</span>
+                <span class="contact-label font-mono">{{ t(c.label) }}</span>
                 <span class="contact-value">{{ c.value }}</span>
               </div>
               <v-icon icon="mdi-arrow-top-right" size="16" class="ml-auto contact-arrow" />

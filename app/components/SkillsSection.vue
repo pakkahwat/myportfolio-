@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { skills, techStack, languages } from '~/data/resume'
 
+const { t } = useT()
+
 // Hold the skill bars at 0 until the column scrolls into view, then let them
 // sweep up to their real values (the progress bar tweens the width itself).
 const skillsCol = ref<any>()
@@ -36,16 +38,16 @@ onMounted(() => {
 
           <div
             v-for="(skill, i) in skills"
-            :key="skill.name"
+            :key="i"
             v-reveal="i * 70"
             class="skill mb-5"
           >
             <div class="d-flex justify-space-between align-end mb-2">
               <div>
-                <span class="skill-name">{{ skill.name }}</span>
-                <span class="skill-sub font-mono">{{ skill.sub }}</span>
+                <span class="skill-name">{{ t(skill.name) }}</span>
+                <span class="skill-sub font-mono">{{ t(skill.sub) }}</span>
               </div>
-              <span class="skill-lvl font-mono">{{ skill.level }}</span>
+              <span class="skill-lvl font-mono">{{ t(skill.level) }}</span>
             </div>
             <v-progress-linear
               :model-value="filled ? skill.value : 0"
@@ -76,12 +78,12 @@ onMounted(() => {
 
           <div v-reveal class="block-label font-mono mb-5">languages</div>
           <div
-            v-for="lang in languages"
-            :key="lang.name"
+            v-for="(lang, li) in languages"
+            :key="li"
             v-reveal="60"
             class="d-flex justify-space-between align-center mb-3"
           >
-            <span class="lang-name">{{ lang.name }}</span>
+            <span class="lang-name">{{ t(lang.name) }}</span>
             <div class="d-flex ga-1">
               <span
                 v-for="n in 5"

@@ -18,6 +18,7 @@ export default defineNuxtConfig({
   },
 
   modules: [
+    '@nuxtjs/i18n',
     // Hook vite-plugin-vuetify into Nuxt's Vite config so that
     // Vuetify components are auto-imported and tree-shaken.
     (_options, nuxt) => {
@@ -27,6 +28,19 @@ export default defineNuxtConfig({
       })
     },
   ],
+
+  // TH/EN. `no_prefix` keeps the single-page URL unchanged; content is driven
+  // by the reactive `locale` (see useT / data/resume.ts). Defaults to English
+  // for every new visitor; the header toggle flips it at runtime.
+  i18n: {
+    strategy: 'no_prefix',
+    defaultLocale: 'en',
+    locales: [
+      { code: 'en', name: 'EN' },
+      { code: 'th', name: 'ไทย' },
+    ],
+    detectBrowserLanguage: false,
+  },
 
   css: [
     '@mdi/font/css/materialdesignicons.css',
@@ -45,7 +59,6 @@ export default defineNuxtConfig({
   app: {
     head: {
       title: 'Pakkahwat Chuesaard — Software Engineer',
-      htmlAttrs: { lang: 'en' },
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },

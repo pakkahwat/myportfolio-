@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { projects } from '~/data/resume'
+
+const { t } = useT()
 </script>
 
 <template>
@@ -21,7 +23,7 @@ import { projects } from '~/data/resume'
             variant="flat"
           >
             <div class="proj-name">{{ proj.name }}</div>
-            <div class="proj-desc">{{ proj.desc }}</div>
+            <div class="proj-desc">{{ t(proj.desc) }}</div>
 
             <div class="d-flex flex-wrap ga-1 mb-3">
               <span v-for="tag in proj.tags" :key="tag" class="pt font-mono">{{ tag }}</span>
@@ -29,7 +31,7 @@ import { projects } from '~/data/resume'
 
             <div class="outcome mt-auto">
               <span class="ol font-mono">// outcome</span>
-              <span class="outcome-text">{{ proj.outcome }}</span>
+              <span class="outcome-text">{{ t(proj.outcome) }}</span>
             </div>
           </v-card>
         </v-col>

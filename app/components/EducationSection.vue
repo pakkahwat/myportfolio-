@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { education } from '~/data/resume'
+
+const { t } = useT()
 </script>
 
 <template>
@@ -14,7 +16,7 @@ import { education } from '~/data/resume'
               <v-icon icon="mdi-school-outline" color="primary" />
             </v-avatar>
             <div>
-              <div class="edu-deg">{{ education.degree }}</div>
+              <div class="edu-deg">{{ t(education.degree) }}</div>
               <div class="edu-uni">{{ education.university }}</div>
             </div>
           </div>

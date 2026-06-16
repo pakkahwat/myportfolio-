@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { navItems, profile } from '~/data/resume'
 
+const { locale, setLocale } = useI18n()
+
 const drawer = ref(false)
 const scrolled = ref(false)
 const progress = ref(0)
@@ -61,6 +63,11 @@ function go(id: string) {
         >
           {{ item.label }}
         </button>
+        <div class="lang-switch font-mono ml-2" role="group" aria-label="Language">
+          <button :class="{ 'lang-on': locale === 'en' }" @click="setLocale('en')">EN</button>
+          <span class="lang-sep">/</span>
+          <button :class="{ 'lang-on': locale === 'th' }" @click="setLocale('th')">ไทย</button>
+        </div>
         <v-btn
           class="ml-3 font-mono cta-btn"
           color="primary"
@@ -72,7 +79,12 @@ function go(id: string) {
         </v-btn>
       </nav>
 
-      <!-- Mobile toggle -->
+      <!-- Mobile: language switch + menu toggle -->
+      <div class="lang-switch font-mono d-md-none ml-auto" role="group" aria-label="Language">
+        <button :class="{ 'lang-on': locale === 'en' }" @click="setLocale('en')">EN</button>
+        <span class="lang-sep">/</span>
+        <button :class="{ 'lang-on': locale === 'th' }" @click="setLocale('th')">ไทย</button>
+      </div>
       <v-btn
         class="d-md-none"
         icon="mdi-menu"
@@ -189,6 +201,31 @@ function go(id: string) {
 .cta-btn {
   letter-spacing: 0.02em;
   text-transform: none;
+}
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.78rem;
+}
+.lang-switch button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 4px;
+  color: var(--text-dim);
+  transition: color 0.18s ease;
+}
+.lang-switch button:hover {
+  color: var(--text-muted);
+}
+.lang-switch button.lang-on {
+  color: var(--amber);
+  font-weight: 600;
+}
+.lang-sep {
+  color: var(--text-dim);
+  opacity: 0.5;
 }
 .drawer-item {
   color: var(--text-muted);

@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { profile, kpis, roles } from '~/data/resume'
+import { profile, kpis, roles, ui } from '~/data/resume'
 
+const { t, locale } = useT()
 const imgError = ref(false)
 
 // Looping typewriter for the role line: types a phrase, holds, deletes it,
@@ -13,7 +14,8 @@ let timer: ReturnType<typeof setTimeout> | undefined
 
 onMounted(() => {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    typed.value = profile.title
+    typed.value = t(profile.title)
+    watch(locale, () => { typed.value = t(profile.title) })
     return
   }
   let phrase = 0
@@ -21,7 +23,7 @@ onMounted(() => {
   let deleting = false
 
   const tick = () => {
-    const full = roles[phrase % roles.length]!
+    const full = t(roles[phrase % roles.length]!)
     if (deleting) {
       char--
       typed.value = full.slice(0, char)
@@ -142,7 +144,7 @@ function scrollTo(id: string) {
               <span v-else class="font-mono avatar-initials">{{ profile.initials }}</span>
             </v-avatar>
             <span class="status-pill font-mono">
-              <span class="status-dot" /> available
+              <span class="status-dot" /> {{ t(ui.available) }}
             </span>
           </div>
         </v-col>
@@ -150,10 +152,10 @@ function scrollTo(id: string) {
 
       <!-- KPI strip -->
       <v-row v-reveal="120" class="kpi-row pb-12" dense>
-        <v-col v-for="kpi in kpis" :key="kpi.label" cols="6" sm="3">
+        <v-col v-for="kpi in kpis" :key="kpi.value" cols="6" sm="3">
           <div class="kpi">
             <div class="font-mono kpi-value"><CountUp :value="kpi.value" /></div>
-            <div class="font-mono kpi-label">{{ kpi.label }}</div>
+            <div class="font-mono kpi-label">{{ t(kpi.label) }}</div>
           </div>
         </v-col>
       </v-row>
