@@ -50,6 +50,9 @@ const year = new Date().getFullYear()
           <span class="text-amber">{{ '{' }}</span>{{ profile.initials }}<span class="text-amber">{{ '}' }}</span>
           · {{ profile.name }}
         </span>
+        <a class="font-mono foot-text foot-mail" :href="`mailto:${profile.email}`">
+          <v-icon icon="mdi-email-outline" size="13" class="mr-1" />{{ profile.email }}
+        </a>
         <span class="font-mono foot-text">
           built with Nuxt 4 + Vuetify 3 · © {{ year }}
         </span>
@@ -119,5 +122,14 @@ const year = new Date().getFullYear()
 .foot-text {
   font-size: 0.72rem;
   color: var(--text-dim);
+}
+.foot-mail {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  transition: color 0.18s ease;
+}
+.foot-mail:hover {
+  color: var(--amber);
 }
 </style>

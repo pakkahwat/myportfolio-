@@ -57,6 +57,7 @@ export const profile = {
   title: 'Software Engineer · Full-Stack & Production Systems',
   location: 'Ayutthaya, Thailand',
   focus: 'Full-Stack · PHP · Vue · Oracle ERP',
+  email: 'pakkahwat.contact@gmail.com',
   // Drop a real photo at /public/profile.jpg to replace the initials avatar.
   photo: '/profile.jpg',
 }
@@ -193,9 +194,9 @@ export const education: Education = {
 
 // Update these with real links before publishing.
 export const contacts: Contact[] = [
-  { label: 'Email', value: 'you@example.com', href: 'mailto:you@example.com', icon: 'mdi-email-outline' },
-  { label: 'GitHub', value: 'github.com/username', href: 'https://github.com/', icon: 'mdi-github' },
-  { label: 'LinkedIn', value: 'linkedin.com/in/username', href: 'https://linkedin.com/', icon: 'mdi-linkedin' },
+  { label: 'Email', value: profile.email, href: `mailto:${profile.email}`, icon: 'mdi-email-outline' },
+  { label: 'GitHub', value: 'github.com/pakkahwat', href: 'https://github.com/pakkahwat', icon: 'mdi-github' },
+  { label: 'LinkedIn', value: 'linkedin.com/in/pakkahwat-chuesaard', href: 'https://www.linkedin.com/in/pakkahwat-chuesaard-1ba7202b4/', icon: 'mdi-linkedin' },
 ]
 
 export const navItems = [
