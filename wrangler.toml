@@ -7,7 +7,7 @@
 # Or connect the repo in the Cloudflare dashboard (Workers > Builds) and it
 # will run the build command + wrangler deploy automatically using this file.
 
-name = "myportfolio"
+name = "pakkahwat-portfolio"
 main = "./.output/server/index.mjs"
 compatibility_date = "2025-06-01"
 compatibility_flags = ["nodejs_compat"]
