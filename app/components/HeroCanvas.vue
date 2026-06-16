@@ -99,14 +99,16 @@ onMounted(() => {
       p.x = Math.max(0, Math.min(w, p.x))
       p.y = Math.max(0, Math.min(h, p.y))
 
-      // cursor attraction: a proximity-weighted lerp toward the pointer, so
-      // particles accelerate as they close in (no velocity build-up / overshoot)
+      // cursor attraction: a gentle proximity-weighted lerp toward the pointer.
+      // A squared falloff keeps far particles barely drifting and only eases
+      // them in as they get close — a slow, graceful pull rather than a yank.
       if (mouse.active) {
         const dx = mouse.x - p.x
         const dy = mouse.y - p.y
         const d = Math.hypot(dx, dy)
         if (d < ATTRACT) {
-          const pull = 0.012 + 0.06 * (1 - d / ATTRACT)
+          const t = 1 - d / ATTRACT // 0 at the edge → 1 at the pointer
+          const pull = 0.0035 + 0.014 * t * t
           p.x += dx * pull
           p.y += dy * pull
           if (d < CONSUME && p.alpha > 0.3) p.fading = true
@@ -115,7 +117,7 @@ onMounted(() => {
 
       // life cycle: fade out when consumed (then respawn), else fade in
       if (p.fading) {
-        p.alpha -= 0.06
+        p.alpha -= 0.045
         if (p.alpha <= 0) respawn(p)
       } else if (p.alpha < 1) {
         p.alpha = Math.min(1, p.alpha + 0.02)
