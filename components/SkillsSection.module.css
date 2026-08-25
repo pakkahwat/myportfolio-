@@ -1,0 +1,52 @@
+.skillsBand {
+  background: #0d1117;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.blockLabel {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--text-dim);
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+}
+.blockLabel::before {
+  content: '// ';
+  color: var(--amber-dim);
+}
+.skillName {
+  font-size: 0.9rem;
+  color: var(--text);
+}
+.skillSub {
+  font-size: 0.74rem;
+  color: var(--text-dim);
+  margin-left: 8px;
+}
+.skillLvl {
+  font-size: 0.68rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--amber-dim);
+  white-space: nowrap;
+}
+.techChip {
+  color: var(--text-muted) !important;
+  border-color: var(--line) !important;
+  background: #1c2330 !important;
+}
+.langName {
+  font-size: 0.9rem;
+  color: var(--text);
+}
+.langDot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #30363d;
+}
+.langDotOn {
+  background: var(--amber);
+}

@@ -1,0 +1,82 @@
+.projectsBand {
+  background: #0d1117;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.projCard {
+  position: relative;
+  background: #1c2330;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 18px 18px 16px;
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  will-change: transform;
+  display: flex;
+  flex-direction: column;
+}
+.projCard:hover {
+  border-color: rgba(245, 166, 35, 0.4);
+  box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.7);
+}
+/* Keep card text above the cursor glare overlay */
+.projCard > * {
+  position: relative;
+  z-index: 1;
+}
+.projName {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.projDesc {
+  font-size: 0.84rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin: 8px 0 12px;
+}
+.pt {
+  font-size: 0.66rem;
+  color: var(--text-dim);
+  background: #30363d;
+  border: 1px solid var(--line);
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+.outcome {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  margin-top: auto;
+}
+.ol {
+  display: block;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+.projLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  text-decoration: none;
+  background: #30363d;
+  border: 1px solid var(--line);
+  padding: 4px 9px;
+  border-radius: 4px;
+  transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+.projLink:hover,
+.projLink:focus-visible {
+  color: var(--amber);
+  border-color: rgba(245, 166, 35, 0.45);
+  background: #3a4250;
+}

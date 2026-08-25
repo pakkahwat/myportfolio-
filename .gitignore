@@ -1,10 +1,7 @@
-# Nuxt dev/build outputs
-.output
-.data
-.nuxt
-.nitro
-.cache
-dist
+# Next.js
+.next
+out
+build
 
 # Cloudflare / Wrangler
 .wrangler
@@ -14,10 +11,9 @@ dist
 node_modules
 
 # package-lock is intentionally not committed: npm prunes platform-specific
-# optional native bindings (oxc-parser, rollup, lightningcss, ...) from a
-# lockfile generated on one OS, so a Windows-generated lock breaks Linux CI
-# (`npm ci` -> missing @oxc-parser/binding-linux-x64-gnu, npm/cli#4828).
-# Without a lockfile, CI uses `npm install`, which resolves bindings per-OS.
+# optional native bindings from a lockfile generated on one OS, so a
+# Windows-generated lock can break Linux CI. Without a lockfile, CI uses
+# `npm install`, which resolves bindings per-OS.
 package-lock.json
 
 # Logs
@@ -36,3 +32,7 @@ logs
 .env
 .env.*
 !.env.example
+
+# TypeScript
+next-env.d.ts
+*.tsbuildinfo

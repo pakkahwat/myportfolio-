@@ -1,0 +1,24 @@
+.eduCard {
+  background: #1c2330;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 22px 24px;
+}
+.eduIcon {
+  background: rgba(245, 166, 35, 0.1);
+  border: 1px solid rgba(245, 166, 35, 0.25);
+}
+.eduDeg {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.eduUni {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+.eduYr {
+  font-size: 0.8rem;
+  color: var(--amber-dim);
+}
