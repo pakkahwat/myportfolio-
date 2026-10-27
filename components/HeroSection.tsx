@@ -13,9 +13,6 @@ import styles from './HeroSection.module.css'
 export default function HeroSection() {
   const { t, locale } = useT()
   const name = t(profile.name)
-  const space = name.indexOf(' ')
-  const first = space > 0 ? name.slice(0, space) : name
-  const last = space > 0 ? name.slice(space + 1) : ''
   const resumeMain = resumeFiles.find((f) => f.lang.toLowerCase() === locale) ?? resumeFiles[0]
   const resumeAlt = resumeFiles.find((f) => f !== resumeMain) ?? resumeFiles[1]
 
@@ -38,13 +35,7 @@ export default function HeroSection() {
                   <span className={styles.statusShort}>{t(ui.availableShort)}</span>
                 </p>
                 <h1 id="hero-name" className={styles.name}>
-                  {first}
-                  {last && (
-                    <>
-                      {' '}
-                      <span className="grad-text">{last}</span>
-                    </>
-                  )}
+                  {name}
                 </h1>
               </div>
             </div>
