@@ -137,6 +137,16 @@ body {
   transition: background-color 0.4s ease, color 0.4s ease;
 }
 
+/* No transitions while the page is first painting (the boot script in
+   layout.tsx removes .preload after two frames), so the saved theme and the
+   initial states appear instantly instead of animating in. */
+.preload *,
+.preload *::before,
+.preload *::after,
+.preload body {
+  transition: none !important;
+}
+
 /* Thai needs more room for stacked vowels/tone marks. */
 html:lang(th) body {
   line-height: 1.75;

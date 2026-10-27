@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from 'next'
-import Script from 'next/script'
 import { Inter, Noto_Sans_Thai, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 import { LocaleProvider } from '@/lib/LocaleContext'
@@ -34,17 +33,21 @@ export const viewport: Viewport = {
   viewportFit: 'cover',
 }
 
-// Runs before first paint: marks JS as available (enables scroll reveal) and
-// applies the visitor's saved theme so a dark-theme reload doesn't flash light.
-const bootScript = `(function(){var d=document.documentElement;d.classList.add('js');var u=navigator.userAgent;if(u.indexOf('Chrome/')>-1&&!/CriOS|FxiOS/.test(u))d.classList.add('refract');try{var t=localStorage.getItem('theme');if(t==='dark'){d.dataset.theme='dark';var m=document.querySelector('meta[name="theme-color"]');if(m)m.content='#07080d'}}catch(e){}})()`
+// Runs in <head>, before the first paint: marks JS as available (enables the
+// scroll reveal), flags Chromium for the glass refraction, applies the saved
+// theme, and holds every CSS transition off (`preload`) until the first frames
+// are drawn — so a dark-theme reload never flashes light or animates the swap.
+// It must be a plain inline <script>: next/script's beforeInteractive queues
+// it until Next's own JS has loaded, which is after the first paint.
+const bootScript = `(function(){var d=document.documentElement;d.classList.add('js','preload');var u=navigator.userAgent;if(u.indexOf('Chrome/')>-1&&!/CriOS|FxiOS/.test(u))d.classList.add('refract');try{var t=localStorage.getItem('theme');if(t==='dark'){d.dataset.theme='dark';var m=document.querySelector('meta[name="theme-color"]');if(m)m.content='#07080d'}}catch(e){}requestAnimationFrame(function(){requestAnimationFrame(function(){d.classList.remove('preload')})})})()`
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${inter.variable} ${thai.variable} ${mono.variable}`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: bootScript }} />
+      </head>
       <body>
-        <Script id="boot" strategy="beforeInteractive">
-          {bootScript}
-        </Script>
         {/* Lens for the liquid-glass bars (used via backdrop + filter on Chromium) */}
         <svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden="true" focusable="false">
           <filter id="lg-refract" x="0%" y="0%" width="100%" height="100%" colorInterpolationFilters="sRGB">
