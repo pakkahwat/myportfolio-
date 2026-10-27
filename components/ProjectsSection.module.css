@@ -139,6 +139,40 @@
   }
 }
 
+/* Even 12-column grid used while a tech filter is on (spans from filteredSpans) */
+.gridFiltered {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 16px;
+}
+.span12 {
+  grid-column: 1 / -1;
+}
+.span6 {
+  grid-column: span 6;
+}
+.span4 {
+  grid-column: span 4;
+}
+/* Tablets: two columns; an odd card out takes the whole last row */
+@media (max-width: 1000px) {
+  .gridFiltered > * {
+    grid-column: span 6;
+  }
+  .gridFiltered > :last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+}
+@media (max-width: 680px) {
+  .gridFiltered {
+    gap: 12px;
+  }
+  .gridFiltered > *,
+  .gridFiltered > :last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+}
+
 /* Browser-framed screenshot */
 .shot {
   position: relative;

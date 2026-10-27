@@ -50,19 +50,37 @@ function Visual({ proj }: { proj: Project }) {
 }
 
 // `ref` / `data-reveal` arrive from <Reveal> (React 19 passes ref as a prop).
+// Filtered results are laid out evenly on the 12-column grid instead of the
+// curated bento sizes: 1 → full row, 2 or 4 → halves, otherwise rows of three,
+// with any leftover cards sharing the last row equally.
+function filteredSpans(n: number): number[] {
+  if (n === 1) return [12]
+  const cols = n === 2 || n === 4 ? 2 : 3
+  const rest = n % cols
+  return Array.from({ length: n }, (_, i) => (i < n - rest ? 12 / cols : 12 / rest))
+}
+
 function ProjectCard({
   proj,
   t,
+  span,
   ref,
   ...rest
 }: {
   proj: Project
   t: (v: Localized) => string
+  span?: number // set while filtering
   ref?: Ref<HTMLElement>
   'data-reveal'?: string
 }) {
   const isLive = proj.group === 'shipped'
-  const layoutClass = proj.layout ? styles[proj.layout] : styles[proj.group]
+  // A lone full-width result with artwork uses the side-by-side "wide" layout.
+  const layoutClass =
+    span === undefined
+      ? proj.layout
+        ? styles[proj.layout]
+        : styles[proj.group]
+      : `${styles[`span${span}`]} ${span === 12 && proj.visual ? styles.wide : ''}`
 
   return (
     <article
@@ -178,10 +196,10 @@ export default function ProjectsSection() {
                 </div>
               </Reveal>
 
-              <div className={styles.grid}>
+              <div className={key ? styles.gridFiltered : styles.grid}>
                 {items.map((proj, i) => (
                   <Reveal key={projects.indexOf(proj)} delay={i * 60}>
-                    <ProjectCard proj={proj} t={t} />
+                    <ProjectCard proj={proj} t={t} span={key ? filteredSpans(items.length)[i] : undefined} />
                   </Reveal>
                 ))}
               </div>
