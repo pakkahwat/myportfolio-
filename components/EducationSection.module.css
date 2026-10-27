@@ -2,29 +2,27 @@
   display: flex;
   align-items: center;
   gap: 20px;
-  padding: 24px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  padding: 24px 28px;
 }
 .icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 48px;
-  height: 48px;
-  border-radius: var(--radius-sm);
-  background: var(--accent-soft);
-  color: var(--accent-ink);
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: var(--gradient);
+  color: #fff;
 }
 .body {
   flex: 1;
   min-width: 0;
 }
 .degree {
-  font-size: 1.125rem;
-  font-weight: 600;
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
 }
 .uni {
   margin-top: 2px;
@@ -36,17 +34,23 @@
   color: var(--muted);
 }
 .gpa {
-  margin-top: 4px;
-  font-weight: 600;
-  color: var(--text);
+  margin-top: 6px;
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  font-weight: 700;
 }
 @media (max-width: 600px) {
   .card {
     flex-wrap: wrap;
+    padding: 20px;
   }
   .side {
     width: 100%;
     display: flex;
+    align-items: center;
     justify-content: space-between;
     text-align: left;
     padding-top: 12px;

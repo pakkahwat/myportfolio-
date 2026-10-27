@@ -14,31 +14,25 @@ export default function AboutSection() {
       <div className="container">
         <SectionHeader id="about" />
 
-        <div className={styles.layout}>
+        <div className={styles.grid}>
           <Reveal>
-            <p className={styles.summary}>{t(summary)}</p>
+            <div className={`tile ${styles.summary}`}>
+              <p>{t(summary)}</p>
+            </div>
           </Reveal>
 
-          <div>
-            <Reveal>
-              <h3 className={styles.subhead}>{t(ui.highlights)}</h3>
+          <h3 className="sr-only">{t(ui.highlights)}</h3>
+          {stories.map((story, i) => (
+            <Reveal key={i} delay={i * 60}>
+              <div className={`tile ${styles.story}`}>
+                <span className={`${styles.storyIndex} grad-text`} aria-hidden="true">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <h4 className={styles.storyHead}>{t(story.head)}</h4>
+                <p className={styles.storyDesc}>{t(story.desc)}</p>
+              </div>
             </Reveal>
-            <ol className={styles.stories}>
-              {stories.map((story, i) => (
-                <Reveal key={i} delay={i * 60}>
-                  <li className={styles.story}>
-                    <span className={`${styles.storyIndex} mono`} aria-hidden="true">
-                      {String(i + 1).padStart(2, '0')}
-                    </span>
-                    <div>
-                      <h4 className={styles.storyHead}>{t(story.head)}</h4>
-                      <p className={styles.storyDesc}>{t(story.desc)}</p>
-                    </div>
-                  </li>
-                </Reveal>
-              ))}
-            </ol>
-          </div>
+          ))}
         </div>
       </div>
     </section>

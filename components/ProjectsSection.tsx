@@ -1,87 +1,171 @@
 'use client'
 
-import type { Project, ProjectGroup } from '@/lib/resume'
+import type { Ref } from 'react'
+import type { Project } from '@/lib/resume'
 import { projects, projectGroups, ui } from '@/lib/resume'
+import { techKeys } from '@/lib/techIcons'
+import { useTechFilter } from '@/lib/TechFilter'
 import { useT, type Localized } from '@/lib/useT'
 import SectionHeader from './SectionHeader'
 import Reveal from './Reveal'
 import { Icon } from './ui'
 import styles from './ProjectsSection.module.css'
 
-// Grid per group: live apps three across, company systems two across (their
-// tag lists are long), early work three across as compact cards.
-const gridClass: Record<ProjectGroup, string> = {
-  shipped: styles.grid3,
-  work: styles.grid2,
-  early: styles.grid3,
+function Visual({ proj }: { proj: Project }) {
+  if (proj.visual?.kind === 'shot') {
+    // Browser-framed screenshot; scrolls down on hover like a live page.
+    return (
+      <div className={styles.shot}>
+        <div className={styles.bar} aria-hidden="true">
+          <i />
+          <i />
+          <i />
+          <span className="mono">{proj.visual.host}</span>
+        </div>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={proj.visual.src} alt="" loading="lazy" width={960} height={1500} />
+      </div>
+    )
+  }
+  if (proj.visual?.kind === 'scan') {
+    // Phone reading a (fake) ID card on-device — no real data is shown.
+    return (
+      <div className={`${styles.art} ${styles.scanArt}`} aria-hidden="true">
+        <div className={styles.phone}>
+          <div className={styles.idcard}>
+            <span className={styles.idFace} />
+            <span className={styles.idLines}>
+              <i />
+              <i />
+              <i />
+            </span>
+          </div>
+          <span className={styles.frame} />
+          <span className={styles.laser} />
+        </div>
+      </div>
+    )
+  }
+  return null
 }
 
-function ProjectCard({ proj, t }: { proj: Project; t: (v: Localized) => string }) {
+// `ref` / `data-reveal` arrive from <Reveal> (React 19 passes ref as a prop).
+function ProjectCard({
+  proj,
+  t,
+  ref,
+  ...rest
+}: {
+  proj: Project
+  t: (v: Localized) => string
+  ref?: Ref<HTMLElement>
+  'data-reveal'?: string
+}) {
   const isLive = proj.group === 'shipped'
-  const compact = proj.group === 'early'
+  const layoutClass = proj.layout ? styles[proj.layout] : styles[proj.group]
 
   return (
-    <article className={`${styles.card} ${compact ? styles.cardCompact : ''}`}>
-      <div className={styles.cardTop}>
-        <span className={styles.meta}>{t(proj.meta)}</span>
-        {proj.badge && (
-          <span className={`${styles.badge} ${isLive ? styles.badgeLive : ''}`}>
-            {isLive && <span className={styles.liveDot} aria-hidden="true" />}
-            {t(proj.badge)}
-          </span>
+    <article
+      ref={ref}
+      {...rest}
+      className={`tile ${styles.card} ${layoutClass}`}
+      // Lets the filter's View Transition move each card to its new spot.
+      style={{ viewTransitionName: `project-${projects.indexOf(proj)}` }}
+    >
+      <Visual proj={proj} />
+
+      <div className={styles.body}>
+        <div className={styles.top}>
+          {proj.icon && (
+            <span className={styles.icon} aria-hidden="true">
+              <Icon name={proj.icon} size={20} />
+            </span>
+          )}
+          <span className={styles.meta}>{t(proj.meta)}</span>
+          {proj.badge && (
+            <span className={`${styles.badge} ${isLive ? styles.badgeLive : ''}`}>
+              {isLive && <span className="live-dot" aria-hidden="true" />}
+              {t(proj.badge)}
+            </span>
+          )}
+        </div>
+
+        <h4 className={styles.name}>{t(proj.name)}</h4>
+        <p className={styles.desc}>{t(proj.desc)}</p>
+
+        {proj.highlight && (
+          <p className={styles.metric}>
+            <span className={`${styles.metricValue} grad-text`}>{proj.highlight.value}</span>
+            <span className={styles.metricLabel}>{t(proj.highlight.label)}</span>
+          </p>
+        )}
+
+        <ul className={`chip-list ${styles.tags}`}>
+          {proj.tags.map((tag) => (
+            <li key={tag} className="chip">
+              {tag}
+            </li>
+          ))}
+        </ul>
+
+        {proj.outcome && (
+          <p className={styles.outcome}>
+            <span className={styles.outcomeLabel}>{t(ui.outcome)}</span>
+            {t(proj.outcome)}
+          </p>
+        )}
+
+        {proj.links && proj.links.length > 0 && (
+          <div className={styles.links}>
+            {proj.links.map((link) => (
+              <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer" className={styles.link}>
+                <Icon name={link.kind === 'github' ? 'github' : 'globe'} size={16} />
+                {link.kind === 'github' ? 'GitHub' : t(ui.liveSite)}
+                <Icon name="arrowUpRight" size={14} />
+              </a>
+            ))}
+          </div>
         )}
       </div>
-
-      <h4 className={styles.name}>{t(proj.name)}</h4>
-      <p className={styles.desc}>{t(proj.desc)}</p>
-
-      {proj.highlight && (
-        <p className={styles.metric}>
-          <span className={`${styles.metricValue} mono`}>{proj.highlight.value}</span>
-          <span className={styles.metricLabel}>{t(proj.highlight.label)}</span>
-        </p>
-      )}
-
-      <ul className={`chip-list ${styles.tags}`} aria-label="Tech">
-        {proj.tags.map((tag) => (
-          <li key={tag} className="chip">
-            {tag}
-          </li>
-        ))}
-      </ul>
-
-      {proj.outcome && (
-        <p className={styles.outcome}>
-          <span className={styles.outcomeLabel}>{t(ui.outcome)}</span>
-          {t(proj.outcome)}
-        </p>
-      )}
-
-      {proj.links && proj.links.length > 0 && (
-        <div className={styles.links}>
-          {proj.links.map((link) => (
-            <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer" className={styles.link}>
-              <Icon name={link.kind === 'github' ? 'github' : 'globe'} size={16} />
-              {link.kind === 'github' ? 'GitHub' : t(ui.liveSite)}
-              <Icon name="arrowUpRight" size={14} className={styles.linkArrow} />
-            </a>
-          ))}
-        </div>
-      )}
     </article>
   )
 }
 
 export default function ProjectsSection() {
   const { t } = useT()
+  const { tech, setTech } = useTechFilter()
+  const key = tech?.toLowerCase() ?? null
+  // "Show all" clears the filter and takes you back up to the toolbox to pick
+  // another tech (no View Transition here — the page is scrolling away anyway).
+  function showAll() {
+    setTech(null, { animate: false })
+    requestAnimationFrame(() => document.getElementById('toolbox')?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+  }
+
+  // With a tech picked, only the projects that used it are shown.
+  const visible = key ? projects.filter((p) => p.tags.some((tag) => techKeys(tag).includes(key))) : projects
 
   return (
     <section id="projects" className="section" aria-labelledby="projects-title">
       <div className="container">
         <SectionHeader id="projects" />
 
+        {tech && (
+          <div className={`liquid ${styles.filter}`} role="status">
+            <span>
+              {t(ui.filterShowing)} <strong>{tech}</strong>
+              <span className={styles.filterCount}>{visible.length}</span>
+            </span>
+            <button type="button" className={styles.clear} onClick={showAll}>
+              <Icon name="x" size={14} />
+              {t(ui.filterClear)}
+            </button>
+          </div>
+        )}
+
         {projectGroups.map((group) => {
-          const items = projects.filter((p) => p.group === group.id)
+          const items = visible.filter((p) => p.group === group.id)
+          if (items.length === 0) return null
           return (
             <div key={group.id} className={styles.group}>
               <Reveal>
@@ -94,12 +178,10 @@ export default function ProjectsSection() {
                 </div>
               </Reveal>
 
-              <div className={gridClass[group.id]}>
+              <div className={styles.grid}>
                 {items.map((proj, i) => (
-                  <Reveal key={`${group.id}-${i}`} delay={i * 60}>
-                    <div className={styles.cell}>
-                      <ProjectCard proj={proj} t={t} />
-                    </div>
+                  <Reveal key={projects.indexOf(proj)} delay={i * 60}>
+                    <ProjectCard proj={proj} t={t} />
                   </Reveal>
                 ))}
               </div>

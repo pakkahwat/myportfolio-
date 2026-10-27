@@ -1,6 +1,8 @@
 'use client'
 
-import { skills, techGroups, languages, ui } from '@/lib/resume'
+// Core strengths + languages. The tech toolbox lives in the hero (Toolbox.tsx),
+// where it can drive the project highlight.
+import { skills, languages, ui } from '@/lib/resume'
 import { useT } from '@/lib/useT'
 import SectionHeader from './SectionHeader'
 import Reveal from './Reveal'
@@ -14,68 +16,39 @@ export default function SkillsSection() {
       <div className="container">
         <SectionHeader id="skills" />
 
-        <div className={styles.layout}>
-          {/* Core strengths: name + scope + level, no percentage bars */}
-          <div>
-            <Reveal>
-              <h3 className={styles.subhead}>{t(ui.coreStrengths)}</h3>
-            </Reveal>
-            <ul className={styles.strengths}>
-              {skills.map((skill, i) => (
-                <Reveal key={i} delay={i * 40}>
-                  <li className={styles.strength}>
-                    <div>
-                      <span className={styles.skillName}>{t(skill.name)}</span>
-                      <span className={styles.skillSub}>{t(skill.sub)}</span>
-                    </div>
-                    <span className={styles.level} data-level={t(skill.level).toLowerCase()}>
-                      {t(skill.level)}
+        <div className={styles.grid}>
+          {skills.map((skill, i) => {
+            const level = t(skill.level)
+            return (
+              <Reveal key={i} delay={(i % 3) * 50}>
+                <div className={`tile ${styles.skill}`}>
+                  <span className={styles.level} data-level={level.toLowerCase()}>
+                    {level}
+                  </span>
+                  <h3 className={styles.name}>{t(skill.name)}</h3>
+                  <p className={styles.sub}>{t(skill.sub)}</p>
+                </div>
+              </Reveal>
+            )
+          })}
+
+          <Reveal>
+            <div className={`tile ${styles.languages}`}>
+              <h3 className={styles.name}>{t(ui.languagesHead)}</h3>
+              <ul>
+                {languages.map((lang, li) => (
+                  <li key={li}>
+                    <span>{t(lang.name)}</span>
+                    <span className={styles.dots} role="img" aria-label={`${lang.level} / 5`}>
+                      {[1, 2, 3, 4, 5].map((n) => (
+                        <span key={n} className={n <= lang.level ? styles.dotOn : styles.dot} />
+                      ))}
                     </span>
                   </li>
-                </Reveal>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <Reveal>
-              <h3 className={styles.subhead}>{t(ui.toolbox)}</h3>
-            </Reveal>
-            <div className={styles.groups}>
-              {techGroups.map((group, i) => (
-                <Reveal key={i} delay={i * 40}>
-                  <div className={styles.group}>
-                    <h4 className={styles.groupName}>{t(group.name)}</h4>
-                    <ul className="chip-list">
-                      {group.items.map((item) => (
-                        <li key={item} className="chip">
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </Reveal>
-              ))}
+                ))}
+              </ul>
             </div>
-
-            <Reveal>
-              <div className={styles.languages}>
-                <h3 className={styles.subhead}>{t(ui.languagesHead)}</h3>
-                <ul>
-                  {languages.map((lang, li) => (
-                    <li key={li} className={styles.lang}>
-                      <span>{t(lang.name)}</span>
-                      <span className={styles.dots} role="img" aria-label={`${lang.level} / 5`}>
-                        {[1, 2, 3, 4, 5].map((n) => (
-                          <span key={n} className={n <= lang.level ? styles.dotOn : styles.dot} />
-                        ))}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </Reveal>
-          </div>
+          </Reveal>
         </div>
       </div>
     </section>

@@ -1,59 +1,111 @@
 /* ============================================================
    Design tokens — light (default) and dark ([data-theme="dark"]).
-   Minimal / Swiss: one neutral scale, one accent (amber), one
-   status colour (green). Every text pair here meets WCAG 4.5:1.
+   Bento + aurora: soft moving colour behind frosted "tiles".
+   Text pairs meet WCAG AA against the tile surfaces.
    ============================================================ */
 :root {
   color-scheme: light;
-  --bg: #f8fafc;
-  --surface: #ffffff;
-  --surface-2: #f1f5f9;
+  --bg: #f6f6fa;
+  --tile: rgba(255, 255, 255, 0.72);
+  --tile-solid: #ffffff;
+  --surface-2: #f1f2f7;
   --text: #0f172a;
   --text-2: #334155;
   --muted: #475569;
-  --border: #e2e8f0;
-  --border-strong: #cbd5e1;
+  --border: rgba(15, 23, 42, 0.08);
+  --border-strong: rgba(15, 23, 42, 0.18);
   --accent: #b45309;
-  --accent-ink: #92400e;
   --accent-soft: #fef3c7;
+  --accent-ink: #92400e;
+  --g1: #f59e0b;
+  --g2: #ec4899;
+  --g3: #6366f1;
+  --gradient: linear-gradient(100deg, var(--g1), var(--g2) 50%, var(--g3));
+  --glow: rgba(99, 102, 241, 0.16);
   --success: #166534;
   --success-dot: #16a34a;
-  --success-soft: #dcfce7;
+  --success-soft: rgba(22, 163, 74, 0.12);
   --primary: #0f172a;
   --on-primary: #ffffff;
   --focus: #2563eb;
-  --header-bg: rgba(248, 250, 252, 0.85);
-  --shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -12px rgba(15, 23, 42, 0.12);
+  --header-bg: rgba(246, 246, 250, 0.8);
+  --aurora-opacity: 0.55;
+  /* Liquid glass: translucent fill with a soft top-left sheen, a bright rim and
+     an inner top highlight, so surfaces read like curved glass over the aurora. */
+  --glass-fill: linear-gradient(135deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.2));
+  --glass-sheen: radial-gradient(120% 70% at 12% 0%, rgba(255, 255, 255, 0.55), transparent 55%);
+  --glass-rim: rgba(255, 255, 255, 0.75);
+  --glass-hi: rgba(255, 255, 255, 0.95);
+  --glass-lo: rgba(255, 255, 255, 0.25);
+  --glass-shadow: 0 12px 32px -14px rgba(15, 23, 42, 0.28);
+  --glass-solid: rgba(255, 255, 255, 0.72);
+  /* Apple-style liquid glass for the floating bars (.liquid): nearly clear,
+     light blur, bright specular rim and a drop shadow so it never melts into
+     what's behind it. */
+  --lg-tint: rgba(255, 255, 255, 0.24);
+  --lg-rim: rgba(255, 255, 255, 0.7);
+  --lg-spec: rgba(255, 255, 255, 0.95);
+  --lg-spec-lo: rgba(255, 255, 255, 0.4);
+  --lg-glow: rgba(255, 255, 255, 0.35);
+  --lg-sheen: rgba(255, 255, 255, 0.42);
+  --lg-blur: 5px;
+  --lg-bright: 1.14;
+  --lg-shadow: 0 10px 30px -8px rgba(15, 23, 42, 0.24), 0 2px 6px -1px rgba(15, 23, 42, 0.1);
+  --lg-text-shadow: 0 0 8px rgba(255, 255, 255, 0.85);
+  --lg-inner: rgba(255, 255, 255, 0.5);
+  --shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 20px 40px -24px rgba(15, 23, 42, 0.25);
 
   --sans: var(--font-inter), var(--font-thai), system-ui, -apple-system, 'Segoe UI', sans-serif;
   --mono: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
-  --radius: 12px;
-  --radius-sm: 8px;
-  --container: 1120px;
-  --header-h: 64px;
+  --radius: 24px;
+  --radius-sm: 12px;
+  --container: 1180px;
+  --header-h: 70px;
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --bg: #0d1117;
-  --surface: #161b22;
-  --surface-2: #21262d;
-  --text: #f0f6fc;
-  --text-2: #c9d1d9;
-  --muted: #9da7b3;
-  --border: #262c36;
-  --border-strong: #3d444d;
+  --bg: #07080d;
+  --tile: rgba(22, 24, 34, 0.72);
+  --tile-solid: #151722;
+  --surface-2: #1e2131;
+  --text: #f1f5f9;
+  --text-2: #cbd5e1;
+  --muted: #a3adbd;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.2);
   --accent: #f5b83d;
-  --accent-ink: #f5b83d;
   --accent-soft: rgba(245, 184, 61, 0.14);
-  --success: #56d364;
-  --success-dot: #3fb950;
-  --success-soft: rgba(63, 185, 80, 0.14);
-  --primary: #f0f6fc;
-  --on-primary: #0d1117;
-  --focus: #58a6ff;
-  --header-bg: rgba(13, 17, 23, 0.85);
-  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 32px -16px rgba(0, 0, 0, 0.6);
+  --accent-ink: #f5b83d;
+  --glow: rgba(245, 158, 11, 0.18);
+  --success: #4ade80;
+  --success-dot: #22c55e;
+  --success-soft: rgba(34, 197, 94, 0.14);
+  --primary: #f1f5f9;
+  --on-primary: #07080d;
+  --focus: #60a5fa;
+  --header-bg: rgba(7, 8, 13, 0.78);
+  --aurora-opacity: 0.32;
+  --glass-fill: linear-gradient(135deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.02));
+  --glass-sheen: radial-gradient(120% 70% at 12% 0%, rgba(255, 255, 255, 0.12), transparent 55%);
+  --glass-rim: rgba(255, 255, 255, 0.14);
+  --glass-hi: rgba(255, 255, 255, 0.22);
+  --glass-lo: rgba(255, 255, 255, 0.05);
+  --glass-shadow: 0 16px 40px -16px rgba(0, 0, 0, 0.8);
+  --glass-solid: rgba(24, 26, 38, 0.74);
+  --lg-tint: rgba(18, 20, 30, 0.26);
+  --lg-rim: rgba(255, 255, 255, 0.2);
+  --lg-spec: rgba(255, 255, 255, 0.5);
+  --lg-spec-lo: rgba(255, 255, 255, 0.12);
+  --lg-glow: rgba(255, 255, 255, 0.06);
+  --lg-sheen: rgba(255, 255, 255, 0.12);
+  --lg-blur: 6px;
+  --lg-bright: 0.7;
+  --lg-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.75), 0 2px 6px -1px rgba(0, 0, 0, 0.5);
+  --lg-text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+  --lg-inner: rgba(255, 255, 255, 0.1);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 24px 48px -24px rgba(0, 0, 0, 0.8);
 }
 
 /* ============================================================
@@ -67,6 +119,8 @@
 
 html {
   scroll-behavior: smooth;
+  /* Our own rubber-band effect replaces the browser's (OverscrollEffect.tsx) */
+  overscroll-behavior-y: none;
   scroll-padding-top: calc(var(--header-h) + 16px);
   -webkit-text-size-adjust: 100%;
 }
@@ -79,11 +133,11 @@ body {
   background: var(--bg);
   color: var(--text-2);
   -webkit-font-smoothing: antialiased;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  overflow-x: hidden;
+  transition: background-color 0.4s ease, color 0.4s ease;
 }
 
 /* Thai needs more room for stacked vowels/tone marks. */
-:lang(th) body,
 html:lang(th) body {
   line-height: 1.75;
 }
@@ -94,8 +148,8 @@ h3,
 h4 {
   margin: 0;
   color: var(--text);
-  line-height: 1.2;
-  letter-spacing: -0.01em;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
 }
 
 p {
@@ -124,12 +178,31 @@ img {
 :focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 2px;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 
 .mono {
   font-family: var(--mono);
   font-feature-settings: 'liga' 0;
+}
+
+/* Gradient text whose colours flow left → right. The gradient starts and ends
+   on the same colour and the move is exactly one tile, so the loop is seamless. */
+.grad-text {
+  background: linear-gradient(90deg, var(--g1), var(--g2), var(--g3), var(--g2), var(--g1));
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shine 8s linear infinite;
+}
+@keyframes shine {
+  from {
+    background-position: 200% 50%;
+  }
+  to {
+    background-position: 0% 50%;
+  }
 }
 
 .sr-only {
@@ -161,6 +234,56 @@ img {
 }
 
 /* ============================================================
+   Aurora background — three soft colour fields drifting slowly.
+   Radial gradients (no blur filter) keep it cheap on phones.
+   ============================================================ */
+.aurora {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: var(--aurora-opacity);
+  transition: opacity 0.4s ease;
+}
+.aurora span {
+  position: absolute;
+  width: 70vmax;
+  height: 70vmax;
+  border-radius: 50%;
+  animation: drift 22s ease-in-out infinite;
+}
+.aurora span:nth-child(1) {
+  top: -25vmax;
+  left: -15vmax;
+  background: radial-gradient(circle, var(--g1) 0%, transparent 62%);
+}
+.aurora span:nth-child(2) {
+  top: -10vmax;
+  right: -25vmax;
+  background: radial-gradient(circle, var(--g2) 0%, transparent 62%);
+  animation-delay: -8s;
+}
+.aurora span:nth-child(3) {
+  bottom: -35vmax;
+  left: 15vmax;
+  background: radial-gradient(circle, var(--g3) 0%, transparent 62%);
+  animation-delay: -15s;
+}
+@keyframes drift {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(6vmax, 4vmax) scale(1.08);
+  }
+  66% {
+    transform: translate(-5vmax, -3vmax) scale(0.95);
+  }
+}
+
+/* ============================================================
    Layout
    ============================================================ */
 .container {
@@ -176,13 +299,144 @@ img {
 }
 
 .section {
-  padding: 96px 0;
-  border-top: 1px solid var(--border);
+  padding: 88px 0 0;
 }
 @media (max-width: 768px) {
   .section {
-    padding: 64px 0;
+    padding-top: 64px;
   }
+}
+
+/* Room for the fixed bottom tab bar on phones (see SiteHeader) */
+@media (max-width: 860px) {
+  body {
+    padding-bottom: calc(96px + env(safe-area-inset-bottom));
+  }
+}
+
+/* ============================================================
+   Tile — the frosted card every block is built from. A soft
+   spotlight follows the pointer (vars set by SpotlightEffect).
+   ============================================================ */
+.glass,
+.tile {
+  background: var(--glass-sheen), var(--glass-fill);
+  -webkit-backdrop-filter: blur(14px) saturate(1.8);
+  backdrop-filter: blur(14px) saturate(1.8);
+  border: 1px solid var(--glass-rim);
+  box-shadow: inset 0 1px 0 var(--glass-hi), inset 0 -1px 0 var(--glass-lo), var(--glass-shadow);
+}
+.tile {
+  position: relative;
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: transform 0.35s var(--ease), border-color 0.3s ease, box-shadow 0.35s ease,
+    filter 0.35s ease, opacity 0.6s var(--ease), translate 0.6s var(--ease);
+}
+.tile::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), var(--glow), transparent 45%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.tile > * {
+  position: relative;
+  z-index: 1;
+}
+@media (hover: hover) {
+  .tile:hover {
+    transform: translateY(-3px);
+    box-shadow: inset 0 1px 0 var(--glass-hi), inset 0 -1px 0 var(--glass-lo), var(--shadow);
+  }
+  .tile:hover::before {
+    opacity: 1;
+  }
+}
+/* Phones: no backdrop blur on the many tiles (costly while scrolling over a
+   fixed background) — a denser glass fill keeps the look and the contrast. */
+@media (max-width: 860px) {
+  .tile {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--glass-sheen), var(--glass-solid);
+  }
+}
+
+/* Edge glow shown while pulling past the top / bottom (OverscrollEffect.tsx) */
+.edge-glow {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  height: 200px;
+  pointer-events: none;
+  opacity: 0;
+  transform: scaleY(0.6);
+  transition: opacity 0.4s ease, transform 0.6s cubic-bezier(0.2, 1.4, 0.4, 1);
+}
+.edge-glow-top {
+  top: 0;
+  transform-origin: 50% 0;
+  background: radial-gradient(60% 100% at 50% 0%, color-mix(in srgb, var(--g2) 55%, transparent), transparent 72%),
+    radial-gradient(40% 80% at 20% 0%, color-mix(in srgb, var(--g1) 45%, transparent), transparent 70%);
+}
+.edge-glow-bottom {
+  bottom: 0;
+  transform-origin: 50% 100%;
+  background: radial-gradient(60% 100% at 50% 100%, color-mix(in srgb, var(--g3) 55%, transparent), transparent 72%),
+    radial-gradient(40% 80% at 80% 100%, color-mix(in srgb, var(--g2) 45%, transparent), transparent 70%);
+}
+
+/* Filter changes animate via the View Transitions API (see TechFilter.tsx) */
+::view-transition-group(*) {
+  animation-duration: 0.45s;
+  animation-timing-function: var(--ease);
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.25s;
+}
+
+/* ============================================================
+   Liquid glass (Apple style) for the floating bars. The ::before layer is
+   the glass body: it lightly blurs and brightens what's behind and — on
+   Chromium, where `html.refract` is set — bends it through the SVG
+   displacement filter in layout.tsx, like light through a lens. ::after adds
+   the specular sheen; the box-shadow gives the bright rim and lift.
+   ============================================================ */
+.liquid {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--lg-tint);
+  border: 1px solid var(--lg-rim);
+  box-shadow: inset 1px 1px 1px var(--lg-spec), inset -1px -1px 1px var(--lg-spec-lo),
+    inset 0 0 18px var(--lg-glow), var(--lg-shadow);
+  text-shadow: var(--lg-text-shadow);
+}
+.liquid::before,
+.liquid::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.liquid::before {
+  -webkit-backdrop-filter: blur(var(--lg-blur)) saturate(1.9) brightness(var(--lg-bright));
+  backdrop-filter: blur(var(--lg-blur)) saturate(1.9) brightness(var(--lg-bright));
+}
+.refract .liquid::before {
+  filter: url(#lg-refract);
+}
+.liquid::after {
+  background: linear-gradient(180deg, var(--lg-sheen) 0%, transparent 48%),
+    radial-gradient(90% 140% at 8% 0%, var(--lg-sheen), transparent 55%);
 }
 
 /* ============================================================
@@ -193,47 +447,37 @@ img {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-height: 44px;
+  min-height: 46px;
   padding: 0 18px;
-  border-radius: var(--radius-sm);
-  border: 1px solid transparent;
+  border-radius: 14px;
+  border: 1px solid var(--border-strong);
+  background: var(--tile-solid);
+  color: var(--text);
   font-size: 0.9375rem;
   font-weight: 600;
   line-height: 1;
   text-decoration: none;
   cursor: pointer;
   white-space: nowrap;
-  transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease,
-    transform 0.18s ease;
+  transition: transform 0.2s var(--ease), background-color 0.2s ease, border-color 0.2s ease;
+}
+.btn:hover {
+  transform: translateY(-2px);
 }
 .btn:active {
-  transform: translateY(1px);
+  transform: translateY(0);
 }
 .btn-primary {
   background: var(--primary);
+  border-color: transparent;
   color: var(--on-primary);
-}
-.btn-primary:hover {
-  background: color-mix(in srgb, var(--primary) 86%, var(--bg));
-}
-.btn-secondary {
-  background: var(--surface);
-  color: var(--text);
-  border-color: var(--border-strong);
-}
-.btn-secondary:hover {
-  border-color: var(--text);
-}
-.btn-sm {
-  min-height: 36px;
-  padding: 0 14px;
-  font-size: 0.875rem;
 }
 
 /* Small rounded tag used for tech names */
 .chip {
   display: inline-flex;
   align-items: center;
+  gap: 6px;
   padding: 3px 10px;
   border-radius: 999px;
   background: var(--surface-2);
@@ -252,33 +496,50 @@ img {
   list-style: none;
 }
 
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--success-dot);
+  animation: ping 2s ease-out infinite;
+}
+@keyframes ping {
+  0% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.55);
+  }
+  70%,
+  100% {
+    box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
+  }
+}
+
 /* ============================================================
    Scroll reveal — only when JS is running (html.js, set before
-   paint by the inline script in layout.tsx), so content is never
-   hidden without it. Subtle: 12px rise, 350ms.
+   paint by the boot script in layout.tsx), so content is never
+   hidden without it.
    ============================================================ */
-.js [data-reveal] {
+/* Uses the standalone `translate` property so it never fights the tiles'
+   hover `transform`; tiles already list opacity/translate in their transition. */
+.js [data-reveal]:not([data-revealed]) {
   opacity: 0;
-  transform: translateY(12px);
-  transition: opacity 0.35s ease-out, transform 0.35s ease-out;
+  translate: 0 18px;
 }
-.js [data-reveal].reveal--in {
-  opacity: 1;
-  transform: none;
+.js [data-reveal]:not(.tile) {
+  transition: opacity 0.6s var(--ease), translate 0.6s var(--ease);
 }
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
   .js [data-reveal] {
     opacity: 1;
-    transform: none;
-    transition: none;
+    translate: none;
   }
   *,
   *::before,
   *::after {
+    animation: none !important;
     transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
   }
 }

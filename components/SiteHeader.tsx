@@ -13,7 +13,7 @@ function applyTheme(theme: Theme) {
   const root = document.documentElement
   if (theme === 'dark') root.dataset.theme = 'dark'
   else delete root.dataset.theme
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#0d1117' : '#f8fafc')
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#07080d' : '#f6f6fa')
   try {
     localStorage.setItem('theme', theme)
   } catch {
@@ -21,10 +21,12 @@ function applyTheme(theme: Theme) {
   }
 }
 
+// Desktop: sticky top bar with links. Phones: the top bar keeps only the
+// name + language/theme buttons, and navigation moves to an app-style tab bar
+// fixed to the bottom of the screen.
 export default function SiteHeader() {
   const { locale, setLocale } = useLocale()
   const { t } = useT()
-  const [drawer, setDrawer] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [active, setActive] = useState<string>('')
   const [theme, setTheme] = useState<Theme>('light')
@@ -32,7 +34,10 @@ export default function SiteHeader() {
   useEffect(() => {
     setTheme(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light')
 
-    const onScroll = () => setScrolled(window.scrollY > 8)
+    const onScroll = () => {
+      setScrolled(window.scrollY > 8)
+      if (window.scrollY < 200) setActive('')
+    }
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
 
@@ -54,102 +59,81 @@ export default function SiteHeader() {
     }
   }, [])
 
-  // Close the drawer on Escape.
-  useEffect(() => {
-    if (!drawer) return
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setDrawer(false)
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [drawer])
-
   function toggleTheme() {
     const next: Theme = theme === 'dark' ? 'light' : 'dark'
     setTheme(next)
     applyTheme(next)
   }
 
-  const langSwitch = (
-    <div className={styles.lang} role="group" aria-label={t(ui.language)}>
-      <button type="button" aria-pressed={locale === 'en'} onClick={() => setLocale('en')}>
-        EN
-      </button>
-      <button type="button" aria-pressed={locale === 'th'} onClick={() => setLocale('th')}>
-        ไทย
-      </button>
-    </div>
-  )
-
-  const themeButton = (
-    <button
-      type="button"
-      className={styles.iconBtn}
-      onClick={toggleTheme}
-      aria-label={t(theme === 'dark' ? ui.themeToLight : ui.themeToDark)}
-      title={t(theme === 'dark' ? ui.themeToLight : ui.themeToDark)}
-    >
-      <Icon name={theme === 'dark' ? 'sun' : 'moon'} size={18} />
-    </button>
-  )
+  const themeLabel = t(theme === 'dark' ? ui.themeToLight : ui.themeToDark)
 
   return (
-    <header className={`${styles.bar} ${scrolled || drawer ? styles.barScrolled : ''}`}>
-      <div className={`container ${styles.inner}`}>
-        <a href="#top" className={styles.brand} onClick={() => setDrawer(false)}>
-          {t(profile.name)}
-        </a>
+    <>
+      <header className={`${styles.bar} ${scrolled ? styles.barScrolled : ''}`}>
+        <div className="container">
+          <div className={`liquid ${styles.inner}`} data-elastic="top">
+          <a href="#top" className={styles.brand}>
+            {t(profile.name)}
+          </a>
 
-        <nav className={styles.nav} aria-label="Primary">
-          {navItems.map((item) => (
+          <nav className={styles.nav} aria-label="Primary">
+            {navItems.map((item) => (
+              <a
+                key={item.id}
+                href={`#${item.id}`}
+                className={`${styles.navLink} ${active === item.id ? styles.navLinkOn : ''}`}
+                aria-current={active === item.id ? 'true' : undefined}
+              >
+                {t(item.label)}
+              </a>
+            ))}
+          </nav>
+
+          <div className={styles.tools}>
+            <div className={styles.lang} role="group" aria-label={t(ui.language)}>
+              <button type="button" aria-pressed={locale === 'en'} onClick={() => setLocale('en')}>
+                EN
+              </button>
+              <button type="button" aria-pressed={locale === 'th'} onClick={() => setLocale('th')}>
+                ไทย
+              </button>
+            </div>
+            {/* Phones: one button that flips to the other language */}
+            <button
+              type="button"
+              className={`${styles.iconBtn} ${styles.langCompact}`}
+              onClick={() => setLocale(locale === 'en' ? 'th' : 'en')}
+              aria-label={`${t(ui.language)}: ${locale === 'en' ? 'ไทย' : 'English'}`}
+              lang={locale === 'en' ? 'th' : 'en'}
+            >
+              {locale === 'en' ? 'ไทย' : 'EN'}
+            </button>
+            <button type="button" className={styles.iconBtn} onClick={toggleTheme} aria-label={themeLabel} title={themeLabel}>
+              <Icon name={theme === 'dark' ? 'sun' : 'moon'} size={18} />
+            </button>
+          </div>
+          </div>
+        </div>
+      </header>
+
+      <nav className={`liquid ${styles.tabbar}`} aria-label="Sections" data-elastic="bottom">
+        {navItems.map((item) => {
+          const on = active === item.id
+          return (
             <a
               key={item.id}
               href={`#${item.id}`}
-              className={`${styles.navLink} ${active === item.id ? styles.navLinkOn : ''}`}
-              aria-current={active === item.id ? 'true' : undefined}
+              className={`${styles.tab} ${on ? styles.tabOn : ''}`}
+              aria-current={on ? 'true' : undefined}
             >
-              {t(item.label)}
+              <span className={styles.tabIcon}>
+                <Icon name={item.icon} size={20} />
+              </span>
+              <span className={styles.tabLabel}>{t(item.label)}</span>
             </a>
-          ))}
-        </nav>
-
-        <div className={styles.tools}>
-          <div className={styles.langInBar}>{langSwitch}</div>
-          {/* Phones: one button that flips to the other language */}
-          <button
-            type="button"
-            className={`${styles.iconBtn} ${styles.langCompact}`}
-            onClick={() => setLocale(locale === 'en' ? 'th' : 'en')}
-            aria-label={`${t(ui.language)}: ${locale === 'en' ? 'ไทย' : 'English'}`}
-            lang={locale === 'en' ? 'th' : 'en'}
-          >
-            {locale === 'en' ? 'ไทย' : 'EN'}
-          </button>
-          {themeButton}
-          <button
-            type="button"
-            className={`${styles.iconBtn} ${styles.menuBtn}`}
-            aria-label={t(ui.menu)}
-            aria-expanded={drawer}
-            aria-controls="mobile-nav"
-            onClick={() => setDrawer((d) => !d)}
-          >
-            <Icon name={drawer ? 'close' : 'menu'} size={20} />
-          </button>
-        </div>
-      </div>
-
-      <nav
-        id="mobile-nav"
-        className={`${styles.drawer} ${drawer ? styles.drawerOpen : ''}`}
-        aria-label="Mobile"
-        hidden={!drawer}
-      >
-        {navItems.map((item) => (
-          <a key={item.id} href={`#${item.id}`} className={styles.drawerItem} onClick={() => setDrawer(false)}>
-            {t(item.label)}
-            <Icon name="arrowRight" size={16} />
-          </a>
-        ))}
+          )
+        })}
       </nav>
-    </header>
+    </>
   )
 }

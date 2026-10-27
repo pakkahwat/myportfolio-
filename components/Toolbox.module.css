@@ -1,0 +1,129 @@
+.toolbox {
+  padding: 28px;
+}
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 16px;
+  margin-bottom: 20px;
+}
+.title {
+  font-size: 1.375rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.hint {
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.groups {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+@media (max-width: 1000px) {
+  .groups {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .toolbox {
+    padding: 20px;
+  }
+  .groups {
+    grid-template-columns: 1fr;
+  }
+}
+
+.group {
+  padding: 16px;
+  border-radius: 18px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+}
+.groupName {
+  margin-bottom: 10px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 34px;
+  padding: 0 11px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--tile-solid);
+  color: var(--text-2);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.itemBtn {
+  cursor: pointer;
+  color: var(--text);
+  transition: transform 0.2s var(--ease), border-color 0.2s ease, background-color 0.2s ease;
+}
+.itemBtn:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-strong);
+}
+.itemOn {
+  border-color: transparent;
+  background: var(--primary);
+  color: var(--on-primary);
+}
+.itemOn svg {
+  fill: currentColor;
+}
+.count {
+  min-width: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+}
+.itemOn .count {
+  background: var(--on-primary);
+  color: var(--primary);
+}
+
+.monogram {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: 0.5625rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+@media (max-width: 768px) {
+  .item {
+    min-height: 40px;
+  }
+}

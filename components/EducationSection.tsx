@@ -16,7 +16,7 @@ export default function EducationSection() {
         <SectionHeader id="education" />
 
         <Reveal>
-          <div className={styles.card}>
+          <div className={`tile ${styles.card}`}>
             <span className={styles.icon}>
               <Icon name="graduation" size={22} />
             </span>

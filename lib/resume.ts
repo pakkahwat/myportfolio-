@@ -61,6 +61,11 @@ export interface Project {
   tags: string[]
   outcome?: Localized
   links?: ProjectLink[]
+  // Card artwork: a browser-framed screenshot, the animated ID-scan phone, or an icon.
+  visual?: { kind: 'shot'; src: string; host: string } | { kind: 'scan' }
+  icon?: 'scan' | 'gavel' | 'sync' | 'receipt' | 'star' | 'cpu' | 'phone'
+  // Bento size inside its group: feature = 2/3 width, side = 1/3, wide = full row.
+  layout?: 'feature' | 'side' | 'wide'
 }
 
 export interface ProjectGroupInfo {
@@ -323,6 +328,8 @@ export const projects: Project[] = [
       en: 'Runs pdf2docx + PyMuPDF in the browser on Pyodide and inserts Intl.Segmenter word breaks so Word wraps Thai lines exactly like the source PDF — a Thai form went from 49.7 to 99.0 fidelity.',
       th: 'รัน pdf2docx + PyMuPDF ในเบราว์เซอร์ด้วย Pyodide และแทรกจุดตัดคำไทยด้วย Intl.Segmenter ให้ Word ตัดบรรทัดตรงกับ PDF ต้นฉบับ — แบบฟอร์มภาษาไทยขยับจาก 49.7 เป็น 99.0 คะแนน',
     },
+    visual: { kind: 'shot', src: '/projects/pdf.webp', host: 'pdf.devda.fyi' },
+    layout: 'feature',
     links: [
       { kind: 'live', href: 'https://pdf.devda.fyi' },
       { kind: 'github', href: 'https://github.com/pakkahwat/pdf-tools' },
@@ -332,6 +339,8 @@ export const projects: Project[] = [
     name: { en: 'Community Equipment Lending', th: 'ระบบยืม-คืนอุปกรณ์ชุมชน' },
     group: 'shipped',
     badge: { en: 'in daily use', th: 'ชุมชนใช้ทุกวัน' },
+    visual: { kind: 'scan' },
+    layout: 'side',
     meta: { en: 'Personal · 2026', th: 'ส่วนตัว · 2026' },
     desc: {
       en: 'Multi-tenant lending system for tables, chairs and tents: staff roles with approval, inventory, printable A4 loan documents, and QR self-service borrowing with no login — designed for low-tech users on a phone.',
@@ -357,9 +366,11 @@ export const projects: Project[] = [
       th: 'ลีกทายผลฟุตบอลที่ AI ลงแข่งกับคนจริงภายใต้กติกาและเส้นตายเดียวกัน พร้อมคอลัมน์รายวันที่ AI เขียนจากข้อมูลแมตช์จริง ผลสด ตารางคะแนน และคำทายทุกคนหลังคิกออฟเปิดให้ดูได้โดยไม่ต้องล็อกอิน และแจ้งเตือนลีกผ่าน Discord',
     },
     highlight: {
-      value: '3',
-      label: { en: 'LLM providers playing against people', th: 'ค่าย LLM ที่ลงแข่งกับคน' },
+      value: '9',
+      label: { en: 'AI players competing with people', th: 'ผู้เล่น AI ที่ลงแข่งกับคน' },
     },
+    visual: { kind: 'shot', src: '/projects/pundit.webp', host: 'pundit.devda.fyi' },
+    layout: 'wide',
     tags: ['Next.js 16', 'TypeScript', 'PostgreSQL', 'Drizzle ORM', 'Auth.js', 'Vercel AI SDK', 'Gemini', 'Tailwind CSS'],
     outcome: {
       en: 'Fairness enforced in the database, not the UI — kickoff lockout against Postgres now(), Row-Level Security hiding picks until reveal, and idempotent scoring that re-runs safely when results are revised.',
@@ -374,6 +385,7 @@ export const projects: Project[] = [
   // ── production work ───────────────────────────────────────────────────
   {
     name: 'Check Stock System',
+    icon: 'scan',
     group: 'work',
     badge: internal,
     meta: 'Easy Money · 2023 – 2026',
@@ -389,6 +401,7 @@ export const projects: Project[] = [
   },
   {
     name: 'Project M — Foreclosed Asset Management',
+    icon: 'gavel',
     group: 'work',
     badge: internal,
     meta: 'Easy Money · 2023 – 2026',
@@ -404,6 +417,7 @@ export const projects: Project[] = [
   },
   {
     name: 'ERP Connect',
+    icon: 'sync',
     group: 'work',
     badge: internal,
     meta: 'Easy Money · 2023 – 2026',
@@ -419,6 +433,7 @@ export const projects: Project[] = [
   },
   {
     name: 'POS System — PTT FitAuto & KingpowerClick',
+    icon: 'receipt',
     group: 'work',
     badge: { en: 'client', th: 'งานลูกค้า' },
     meta: 'AdaSoft · 2021 – 2023',
@@ -436,6 +451,7 @@ export const projects: Project[] = [
   // ── earlier work ──────────────────────────────────────────────────────
   {
     name: 'Allreview.th',
+    icon: 'star',
     group: 'early',
     meta: { en: 'Client project', th: 'งานลูกค้า' },
     desc: {
@@ -446,6 +462,7 @@ export const projects: Project[] = [
   },
   {
     name: 'Smart PetFeeder',
+    icon: 'cpu',
     group: 'early',
     badge: { en: 'senior project', th: 'โปรเจกต์จบ' },
     meta: { en: 'University · 2020', th: 'มหาวิทยาลัย · 2020' },
@@ -457,6 +474,7 @@ export const projects: Project[] = [
   },
   {
     name: 'Stock & Barcode App',
+    icon: 'phone',
     group: 'early',
     meta: { en: 'Android app', th: 'แอป Android' },
     desc: {
@@ -483,23 +501,26 @@ export const contacts: Contact[] = [
 // Prose that lives directly in component templates (not part of the data above).
 export const ui = {
   available: { en: 'Available now · remote or hybrid', th: 'พร้อมเริ่มงานทันที · Remote / Hybrid' } as Localized,
+  availableShort: { en: 'Available now', th: 'พร้อมเริ่มงานทันที' } as Localized,
   heroPitch: {
     en: 'I take business systems from requirements to production and keep them running — five years in finance and pawnshop operations, plus three apps of my own that are live today.',
     th: 'รับงานระบบตั้งแต่เก็บความต้องการจนขึ้นใช้งานจริง และดูแลให้เดินต่อได้ — 5 ปีในธุรกิจการเงินและโรงรับจำนำ และมีแอปของตัวเองที่เปิดใช้งานจริงอีก 3 ตัว',
   } as Localized,
   viewProjects: { en: 'View projects', th: 'ดูผลงาน' } as Localized,
   contactMe: { en: 'Contact', th: 'ติดต่อ' } as Localized,
-  resume: { en: 'Résumé', th: 'เรซูเม่' } as Localized,
-  resumeLabel: { en: 'Résumé (PDF)', th: 'เรซูเม่ (PDF)' } as Localized,
+  resume: { en: 'Resume', th: 'เรซูเม่' } as Localized,
+  resumeLabel: { en: 'Resume (PDF)', th: 'เรซูเม่ (PDF)' } as Localized,
   resumeMeta: { en: '2 pages · A4 · TH / EN', th: '2 หน้า · A4 · ไทย / อังกฤษ' } as Localized,
   outcome: { en: 'Outcome', th: 'ผลลัพธ์' } as Localized,
   liveSite: { en: 'Live site', th: 'เว็บจริง' } as Localized,
   themeToDark: { en: 'Switch to dark theme', th: 'เปลี่ยนเป็นธีมมืด' } as Localized,
   themeToLight: { en: 'Switch to light theme', th: 'เปลี่ยนเป็นธีมสว่าง' } as Localized,
-  menu: { en: 'Menu', th: 'เมนู' } as Localized,
   language: { en: 'Language', th: 'ภาษา' } as Localized,
   coreStrengths: { en: 'Core strengths', th: 'จุดแข็งหลัก' } as Localized,
   toolbox: { en: 'Toolbox', th: 'เครื่องมือที่ใช้' } as Localized,
+  toolboxHint: { en: 'Tap a tech to see the projects that used it', th: 'กดชื่อ tech เพื่อดูผลงานที่ใช้' } as Localized,
+  filterShowing: { en: 'Showing projects built with', th: 'แสดงผลงานที่ใช้' } as Localized,
+  filterClear: { en: 'Show all', th: 'แสดงทั้งหมด' } as Localized,
   languagesHead: { en: 'Languages', th: 'ภาษา' } as Localized,
   highlights: { en: 'Highlights', th: 'ผลงานที่ภูมิใจ' } as Localized,
   contactHead: { en: 'Have a system that needs building, fixing or rescuing?', th: 'มีระบบที่ต้องสร้าง แก้ไข หรือกู้คืนอยู่ไหม?' } as Localized,
@@ -521,10 +542,15 @@ export const sections = {
   contact: { n: '06', title: { en: 'Contact', th: 'ติดต่อ' } as Localized },
 }
 
-export const navItems: { id: keyof typeof sections; label: Localized }[] = [
-  { id: 'projects', label: { en: 'Projects', th: 'ผลงาน' } },
-  { id: 'about', label: { en: 'About', th: 'เกี่ยวกับ' } },
-  { id: 'experience', label: { en: 'Experience', th: 'ประสบการณ์' } },
-  { id: 'skills', label: { en: 'Skills', th: 'ทักษะ' } },
-  { id: 'contact', label: { en: 'Contact', th: 'ติดต่อ' } },
+// Header links on desktop; the bottom tab bar on phones (icon + label, max 5).
+export const navItems: {
+  id: keyof typeof sections
+  label: Localized
+  icon: 'grid' | 'user' | 'briefcase' | 'code' | 'mail'
+}[] = [
+  { id: 'projects', label: { en: 'Projects', th: 'ผลงาน' }, icon: 'grid' },
+  { id: 'about', label: { en: 'About', th: 'เกี่ยวกับ' }, icon: 'user' },
+  { id: 'experience', label: { en: 'Experience', th: 'ประสบการณ์' }, icon: 'briefcase' },
+  { id: 'skills', label: { en: 'Skills', th: 'ทักษะ' }, icon: 'code' },
+  { id: 'contact', label: { en: 'Contact', th: 'ติดต่อ' }, icon: 'mail' },
 ]

@@ -15,7 +15,7 @@ export default function SectionHeader({ id }: { id: keyof typeof sections }) {
     <Reveal>
       <header className={styles.head}>
         <span className={`${styles.index} mono`} aria-hidden="true">
-          {s.n}
+          <span className="grad-text">{s.n}</span>
         </span>
         <h2 id={`${id}-title`} className={styles.title}>
           {t(s.title)}

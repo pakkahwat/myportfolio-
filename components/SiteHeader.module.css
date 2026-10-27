@@ -1,21 +1,17 @@
+/* Floating liquid-glass pill that stays at the top */
 .bar {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: var(--header-bg);
-  backdrop-filter: saturate(180%) blur(12px);
-  -webkit-backdrop-filter: saturate(180%) blur(12px);
-  border-bottom: 1px solid transparent;
-  transition: border-color 0.2s ease;
-}
-.barScrolled {
-  border-bottom-color: var(--border);
+  padding-top: 10px;
 }
 .inner {
   display: flex;
   align-items: center;
   gap: 24px;
-  height: var(--header-h);
+  height: 56px;
+  padding: 0 8px 0 20px;
+  border-radius: 999px;
 }
 
 .brand {
@@ -65,7 +61,7 @@
   padding: 3px;
   border: 1px solid var(--border);
   border-radius: 999px;
-  background: var(--surface);
+  background: var(--lg-inner);
 }
 .lang button {
   min-width: 44px;
@@ -93,7 +89,7 @@
   height: 40px;
   border: 1px solid var(--border);
   border-radius: 999px;
-  background: var(--surface);
+  background: var(--lg-inner);
   color: var(--text);
   cursor: pointer;
   transition: border-color 0.15s ease;
@@ -101,11 +97,14 @@
 .iconBtn:hover {
   border-color: var(--border-strong);
 }
-.menuBtn {
+.langCompact {
   display: none;
+  font-size: 0.8125rem;
+  font-weight: 600;
 }
 
-.drawer {
+/* App-style bottom tab bar — phones and small tablets only */
+.tabbar {
   display: none;
 }
 
@@ -120,39 +119,66 @@
     width: 44px;
     height: 44px;
   }
-  .menuBtn {
-    display: inline-flex;
+
+  /* Floating liquid-glass tab bar, iOS style */
+  .tabbar {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    bottom: calc(10px + env(safe-area-inset-bottom));
+    z-index: 50;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    padding: 6px;
+    border-radius: 28px;
   }
-  .drawer {
-    display: block;
-    border-top: 1px solid var(--border);
-    background: var(--bg);
-    padding: 8px 16px 16px;
-  }
-  .drawer[hidden] {
-    display: none;
-  }
-  .drawerItem {
+  .tab {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    min-height: 52px;
-    padding: 0 4px;
-    border-bottom: 1px solid var(--border);
-    font-size: 1.0625rem;
-    font-weight: 500;
-    color: var(--text);
+    justify-content: center;
+    gap: 4px;
+    min-height: 56px;
+    color: var(--muted);
     text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .tabIcon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 30px;
+    border-radius: 999px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  .tabLabel {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+  .tab:active .tabIcon {
+    background: var(--surface-2);
+  }
+  .tabOn {
+    color: var(--text);
+  }
+  .tabOn .tabIcon {
+    background: var(--accent-soft);
+    color: var(--accent-ink);
+  }
+  .tabOn .tabLabel {
+    font-weight: 600;
   }
 }
-.langCompact {
-  display: none;
-  font-size: 0.8125rem;
-  font-weight: 600;
-}
+
 /* Phones: the segmented switch becomes one flip button so the bar never overflows */
 @media (max-width: 480px) {
-  .langInBar {
+  .lang {
     display: none;
   }
   .langCompact {

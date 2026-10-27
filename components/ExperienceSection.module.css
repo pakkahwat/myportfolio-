@@ -1,39 +1,76 @@
-.list {
+.timeline {
+  position: relative;
   margin: 0;
-  padding: 0;
+  padding: 0 0 0 36px;
   list-style: none;
 }
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 9px;
+  top: 12px;
+  bottom: 12px;
+  width: 2px;
+  border-radius: 2px;
+  background: linear-gradient(var(--g1), var(--g2), var(--g3));
+  opacity: 0.6;
+}
 .item {
-  display: grid;
-  grid-template-columns: 220px minmax(0, 1fr);
-  gap: 32px;
-  padding: 32px 0;
-  border-top: 1px solid var(--border);
+  position: relative;
 }
-.item:first-child {
-  border-top: 0;
-  padding-top: 0;
+.item + .item {
+  margin-top: 16px;
 }
-.period {
-  padding-top: 3px;
-  font-size: 0.875rem;
-  color: var(--muted);
+.dot {
+  position: absolute;
+  left: -33px;
+  top: 30px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--tile-solid);
+  border: 3px solid var(--g2);
+}
+.item:first-child .dot {
+  border-color: var(--g1);
+}
+.card {
+  padding: 26px 28px;
+}
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px 16px;
 }
 .role {
-  font-size: 1.25rem;
-  font-weight: 600;
+  font-size: 1.375rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
 }
 .company {
   margin-top: 4px;
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--accent);
+}
+.period {
+  flex-shrink: 0;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  font-size: 0.8125rem;
+  color: var(--text-2);
 }
 .bullets {
   margin: 16px 0 0;
   padding: 0;
   list-style: none;
-  max-width: 760px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 28px;
 }
 .bullets li {
   position: relative;
@@ -41,22 +78,37 @@
   font-size: 0.9375rem;
   color: var(--text-2);
 }
-.bullets li + li {
-  margin-top: 8px;
-}
 .bullets li::before {
   content: '';
   position: absolute;
   left: 2px;
-  top: 0.72em;
-  width: 6px;
-  height: 1.5px;
-  background: var(--border-strong);
+  top: 0.62em;
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+  background: var(--gradient);
 }
-@media (max-width: 768px) {
-  .item {
+@media (max-width: 900px) {
+  .bullets {
     grid-template-columns: 1fr;
-    gap: 6px;
-    padding: 28px 0;
+  }
+}
+@media (max-width: 600px) {
+  .timeline {
+    padding-left: 24px;
+  }
+  .timeline::before {
+    left: 5px;
+  }
+  .dot {
+    left: -25px;
+    width: 12px;
+    height: 12px;
+  }
+  .card {
+    padding: 20px;
+  }
+  .role {
+    font-size: 1.1875rem;
   }
 }

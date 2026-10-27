@@ -6,6 +6,7 @@ import SectionHeader from './SectionHeader'
 import Reveal from './Reveal'
 import styles from './ExperienceSection.module.css'
 
+// Vertical timeline: a gradient rail on the left, one tile per job.
 export default function ExperienceSection() {
   const { t } = useT()
 
@@ -14,22 +15,27 @@ export default function ExperienceSection() {
       <div className="container">
         <SectionHeader id="experience" />
 
-        <ol className={styles.list}>
+        <ol className={styles.timeline}>
           {jobs.map((job, i) => (
-            <Reveal key={job.company} delay={i * 50}>
-              <li className={styles.item}>
-                <p className={`${styles.period} mono`}>{t(job.period)}</p>
-                <div>
-                  <h3 className={styles.role}>{t(job.role)}</h3>
-                  <p className={styles.company}>{job.company}</p>
+            <li key={job.company} className={styles.item}>
+              <span className={styles.dot} aria-hidden="true" />
+              <Reveal delay={i * 50}>
+                <div className={`tile ${styles.card}`}>
+                  <div className={styles.head}>
+                    <div>
+                      <h3 className={styles.role}>{t(job.role)}</h3>
+                      <p className={styles.company}>{job.company}</p>
+                    </div>
+                    <span className={`${styles.period} mono`}>{t(job.period)}</span>
+                  </div>
                   <ul className={styles.bullets}>
                     {job.bullets.map((b, bi) => (
                       <li key={bi}>{t(b)}</li>
                     ))}
                   </ul>
                 </div>
-              </li>
-            </Reveal>
+              </Reveal>
+            </li>
           ))}
         </ol>
       </div>

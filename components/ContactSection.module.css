@@ -1,97 +1,91 @@
 .contact {
   padding-bottom: 32px;
 }
-.layout {
-  display: grid;
-  grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
-  gap: 56px;
-  align-items: start;
-}
-@media (max-width: 900px) {
-  .layout {
-    grid-template-columns: 1fr;
-    gap: 40px;
-  }
-}
 
+/* Big call-to-action tile on the left, three link tiles stacked on the right */
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  grid-template-rows: repeat(3, auto);
+  gap: 16px;
+}
+.cta {
+  grid-row: span 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 40px;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.16), rgba(236, 72, 153, 0.14) 50%, rgba(99, 102, 241, 0.18)),
+    var(--tile);
+}
 .head {
-  font-size: clamp(1.5rem, 3vw, 2rem);
-  font-weight: 700;
-  line-height: 1.25;
-  letter-spacing: -0.02em;
+  font-size: clamp(1.75rem, 3.4vw, 2.5rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
   color: var(--text);
 }
 :lang(th) .head {
-  line-height: 1.45;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
 }
 .sub {
   margin-top: 16px;
-  max-width: 520px;
+  max-width: 540px;
   font-size: 1.0625rem;
-  color: var(--muted);
+  color: var(--text-2);
 }
 .mailBtn {
+  align-self: flex-start;
   margin-top: 28px;
   max-width: 100%;
+  min-height: 52px;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.links {
-  display: grid;
-  gap: 12px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.row {
+.link {
   display: flex;
   align-items: center;
   gap: 14px;
-  min-height: 64px;
-  padding: 12px 16px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  min-height: 84px;
+  padding: 16px 20px;
   color: var(--text);
   text-decoration: none;
-  transition: border-color 0.15s ease;
 }
-a.row:hover {
-  border-color: var(--border-strong);
-}
-.rowIcon {
+.linkIcon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-sm);
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
   background: var(--surface-2);
-  color: var(--text);
 }
-.rowText {
+.linkText {
   display: flex;
   flex-direction: column;
-  min-width: 0;
   flex: 1;
+  min-width: 0;
 }
-.rowLabel {
+.linkLabel {
   font-size: 0.8125rem;
   color: var(--muted);
 }
-.rowValue {
+.linkValue {
   font-size: 0.9375rem;
-  font-weight: 500;
+  font-weight: 600;
   overflow-wrap: anywhere;
 }
-.rowArrow {
+.arrow {
   flex-shrink: 0;
   color: var(--muted);
+  transition: transform 0.25s var(--ease), color 0.2s ease;
 }
-a.row:hover .rowArrow {
+a.link:hover .arrow {
   color: var(--text);
+  transform: translate(2px, -2px);
 }
 
 .resumeLinks {
@@ -106,36 +100,56 @@ a.row:hover .rowArrow {
   min-height: 40px;
   padding: 0 12px;
   border: 1px solid var(--border-strong);
-  border-radius: var(--radius-sm);
+  border-radius: 12px;
+  background: var(--tile-solid);
   font-size: 0.875rem;
   font-weight: 600;
   color: var(--text);
   text-decoration: none;
+  transition: transform 0.2s var(--ease);
 }
 .resumeLinks a:hover {
-  border-color: var(--text);
+  transform: translateY(-2px);
 }
-@media (max-width: 768px) {
+
+/* Narrow phones: the EN/TH download buttons drop under the label */
+@media (max-width: 420px) {
+  .link {
+    flex-wrap: wrap;
+  }
+  .resumeLinks {
+    width: 100%;
+    padding-left: 60px;
+  }
+  .resumeLinks a {
+    flex: 1;
+    justify-content: center;
+  }
+}
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .cta {
+    grid-row: auto;
+    padding: 28px 22px;
+  }
   .resumeLinks a {
     min-height: 44px;
   }
 }
 
 .foot {
-  margin-top: 96px;
-  border-top: 1px solid var(--border);
+  margin-top: 72px;
 }
 .footInner {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   gap: 8px 24px;
-  padding-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
   font-size: 0.875rem;
   color: var(--muted);
-}
-@media (max-width: 768px) {
-  .foot {
-    margin-top: 64px;
-  }
 }

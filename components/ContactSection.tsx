@@ -16,9 +16,9 @@ export default function ContactSection() {
       <div className="container">
         <SectionHeader id="contact" />
 
-        <div className={styles.layout}>
+        <div className={styles.grid}>
           <Reveal>
-            <div>
+            <div className={`tile ${styles.cta}`}>
               <p className={styles.head}>{t(ui.contactHead)}</p>
               <p className={styles.sub}>{t(ui.contactSub)}</p>
               <a href={`mailto:${profile.email}`} className={`btn btn-primary ${styles.mailBtn}`}>
@@ -28,49 +28,43 @@ export default function ContactSection() {
             </div>
           </Reveal>
 
-          <ul className={styles.links}>
-            {/* Email already has the big button on the left */}
-            {contacts.filter((c) => c.icon !== 'mail').map((c, i) => (
-              <Reveal key={c.href} delay={i * 50}>
-                <li>
-                  <a
-                    href={c.href}
-                    target={c.href.startsWith('mailto:') ? undefined : '_blank'}
-                    rel="noopener noreferrer"
-                    className={styles.row}
-                  >
-                    <span className={styles.rowIcon}>
-                      <Icon name={c.icon} size={20} />
-                    </span>
-                    <span className={styles.rowText}>
-                      <span className={styles.rowLabel}>{t(c.label)}</span>
-                      <span className={styles.rowValue}>{c.value}</span>
-                    </span>
-                    <Icon name="arrowUpRight" size={18} className={styles.rowArrow} />
-                  </a>
-                </li>
+          {/* Email already has the big button */}
+          {contacts
+            .filter((c) => c.icon !== 'mail')
+            .map((c, i) => (
+              <Reveal key={c.href} delay={60 + i * 50}>
+                <a href={c.href} target="_blank" rel="noopener noreferrer" className={`tile ${styles.link}`}>
+                  <span className={styles.linkIcon}>
+                    <Icon name={c.icon} size={22} />
+                  </span>
+                  <span className={styles.linkText}>
+                    <span className={styles.linkLabel}>{t(c.label)}</span>
+                    <span className={styles.linkValue}>{c.value}</span>
+                  </span>
+                  <Icon name="arrowUpRight" size={18} className={styles.arrow} />
+                </a>
               </Reveal>
             ))}
-            <Reveal delay={100}>
-              <li className={styles.row}>
-                <span className={styles.rowIcon}>
-                  <Icon name="file" size={20} />
-                </span>
-                <span className={styles.rowText}>
-                  <span className={styles.rowLabel}>{t(ui.resumeLabel)}</span>
-                  <span className={styles.rowValue}>{t(ui.resumeMeta)}</span>
-                </span>
-                <span className={styles.resumeLinks}>
-                  {resumeFiles.map((f) => (
-                    <a key={f.lang} href={f.href} download aria-label={`${t(ui.resumeLabel)} ${f.lang}`}>
-                      <Icon name="download" size={14} />
-                      {f.lang}
-                    </a>
-                  ))}
-                </span>
-              </li>
-            </Reveal>
-          </ul>
+
+          <Reveal delay={160}>
+            <div className={`tile ${styles.link}`}>
+              <span className={styles.linkIcon}>
+                <Icon name="file" size={22} />
+              </span>
+              <span className={styles.linkText}>
+                <span className={styles.linkLabel}>{t(ui.resumeLabel)}</span>
+                <span className={styles.linkValue}>{t(ui.resumeMeta)}</span>
+              </span>
+              <span className={styles.resumeLinks}>
+                {resumeFiles.map((f) => (
+                  <a key={f.lang} href={f.href} download aria-label={`${t(ui.resumeLabel)} ${f.lang}`}>
+                    <Icon name="download" size={14} />
+                    {f.lang}
+                  </a>
+                ))}
+              </span>
+            </div>
+          </Reveal>
         </div>
       </div>
 
