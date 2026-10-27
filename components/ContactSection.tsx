@@ -1,75 +1,87 @@
 'use client'
 
-import type { Contact } from '@/lib/resume'
-import { contacts, profile, ui } from '@/lib/resume'
-import { useT, type Localized } from '@/lib/useT'
-import { useReveal } from '@/lib/directives'
-import SectionLabel from './SectionLabel'
+import { contacts, profile, ui, resumeFiles, lastUpdated } from '@/lib/resume'
+import { useT } from '@/lib/useT'
+import SectionHeader from './SectionHeader'
 import Reveal from './Reveal'
 import { Icon } from './ui'
 import styles from './ContactSection.module.css'
-
-function ContactLink({ c, index, t }: { c: Contact; index: number; t: (v: Localized) => string }) {
-  const ref = useReveal<HTMLAnchorElement>(index * 70)
-  return (
-    <a ref={ref} href={c.href} target="_blank" rel="noopener" className={styles.contactLink}>
-      <Icon icon={c.icon} color="primary" size={20} className="mr-3" />
-      <div className="d-flex flex-column">
-        <span className={`${styles.contactLabel} font-mono`}>{t(c.label)}</span>
-        <span className={styles.contactValue}>{c.value}</span>
-      </div>
-      <Icon icon="mdi-arrow-top-right" size={16} className={styles.contactArrow} />
-    </a>
-  )
-}
 
 export default function ContactSection() {
   const { t } = useT()
   const year = new Date().getFullYear()
 
   return (
-    <section id="contact" className={`${styles.contact} grid-bg`}>
-      <div className="container py-12 py-md-16" style={{ maxWidth: 1080 }}>
-        <SectionLabel label="get_in_touch" />
+    <section id="contact" className={`section ${styles.contact}`} aria-labelledby="contact-title">
+      <div className="container">
+        <SectionHeader id="contact" />
 
-        <div className="row align-center">
-          <div className="col col-12 col-md-7">
-            <Reveal>
-              <p className={`font-mono prompt ${styles.contactPrompt} mb-2`}>echo $STATUS</p>
-            </Reveal>
-            <Reveal delay={80}>
-              <h2 className={`${styles.contactHead} mb-4`}>
-                {t(ui.contactHead1)} <span className={styles.textAmber}>production-critical</span>{' '}
-                {t(ui.contactHead2)}
-              </h2>
-            </Reveal>
-            <Reveal delay={140}>
-              <p className={styles.contactSub}>{t(ui.contactSub)}</p>
-            </Reveal>
-          </div>
-
-          <div className="col col-12 col-md-5">
-            <div className="d-flex flex-column ga-3">
-              {contacts.map((c, i) => (
-                <ContactLink key={i} c={c} index={i} t={t} />
-              ))}
+        <div className={styles.layout}>
+          <Reveal>
+            <div>
+              <p className={styles.head}>{t(ui.contactHead)}</p>
+              <p className={styles.sub}>{t(ui.contactSub)}</p>
+              <a href={`mailto:${profile.email}`} className={`btn btn-primary ${styles.mailBtn}`}>
+                <Icon name="mail" size={18} />
+                {profile.email}
+              </a>
             </div>
-          </div>
+          </Reveal>
+
+          <ul className={styles.links}>
+            {/* Email already has the big button on the left */}
+            {contacts.filter((c) => c.icon !== 'mail').map((c, i) => (
+              <Reveal key={c.href} delay={i * 50}>
+                <li>
+                  <a
+                    href={c.href}
+                    target={c.href.startsWith('mailto:') ? undefined : '_blank'}
+                    rel="noopener noreferrer"
+                    className={styles.row}
+                  >
+                    <span className={styles.rowIcon}>
+                      <Icon name={c.icon} size={20} />
+                    </span>
+                    <span className={styles.rowText}>
+                      <span className={styles.rowLabel}>{t(c.label)}</span>
+                      <span className={styles.rowValue}>{c.value}</span>
+                    </span>
+                    <Icon name="arrowUpRight" size={18} className={styles.rowArrow} />
+                  </a>
+                </li>
+              </Reveal>
+            ))}
+            <Reveal delay={100}>
+              <li className={styles.row}>
+                <span className={styles.rowIcon}>
+                  <Icon name="file" size={20} />
+                </span>
+                <span className={styles.rowText}>
+                  <span className={styles.rowLabel}>{t(ui.resumeLabel)}</span>
+                  <span className={styles.rowValue}>{t(ui.resumeMeta)}</span>
+                </span>
+                <span className={styles.resumeLinks}>
+                  {resumeFiles.map((f) => (
+                    <a key={f.lang} href={f.href} download aria-label={`${t(ui.resumeLabel)} ${f.lang}`}>
+                      <Icon name="download" size={14} />
+                      {f.lang}
+                    </a>
+                  ))}
+                </span>
+              </li>
+            </Reveal>
+          </ul>
         </div>
       </div>
 
       <footer className={styles.foot}>
-        <div className={styles.footInner}>
-          <span className={`font-mono ${styles.footText}`}>
-            <span className={styles.textAmber}>{'{'}</span>
-            {profile.initials}
-            <span className={styles.textAmber}>{'}'}</span> · {t(profile.name)}
+        <div className={`container ${styles.footInner}`}>
+          <span>
+            © {year} {t(profile.name)}
           </span>
-          <a className={`font-mono ${styles.footText} ${styles.footMail}`} href={`mailto:${profile.email}`}>
-            <Icon icon="mdi-email-outline" size={13} className="mr-1" />
-            {profile.email}
-          </a>
-          <span className={`font-mono ${styles.footText}`}>built with Next.js · © {year}</span>
+          <span>
+            {t(ui.builtWith)} · {t(ui.updated)} {t(lastUpdated)}
+          </span>
         </div>
       </footer>
     </section>

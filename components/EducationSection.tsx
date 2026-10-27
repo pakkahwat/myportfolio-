@@ -2,37 +2,31 @@
 
 import { education } from '@/lib/resume'
 import { useT } from '@/lib/useT'
-import SectionLabel from './SectionLabel'
+import SectionHeader from './SectionHeader'
 import Reveal from './Reveal'
-import { Avatar, Chip, Icon } from './ui'
+import { Icon } from './ui'
 import styles from './EducationSection.module.css'
 
 export default function EducationSection() {
   const { t } = useT()
 
   return (
-    <section id="education" className="py-12 py-md-16">
-      <div className="container" style={{ maxWidth: 1080 }}>
-        <SectionLabel label="education" />
+    <section id="education" className="section" aria-labelledby="education-title">
+      <div className="container">
+        <SectionHeader id="education" />
 
         <Reveal>
-          <div className={styles.eduCard}>
-            <div className="d-flex flex-wrap justify-space-between align-center ga-4">
-              <div className="d-flex align-center ga-4">
-                <Avatar size={46} className={styles.eduIcon}>
-                  <Icon icon="mdi-school-outline" color="primary" />
-                </Avatar>
-                <div>
-                  <div className={styles.eduDeg}>{t(education.degree)}</div>
-                  <div className={styles.eduUni}>{education.university}</div>
-                </div>
-              </div>
-              <div className="text-md-end">
-                <div className={`${styles.eduYr} font-mono`}>{education.period}</div>
-                <Chip size="x-small" color="primary" variant="tonal" className="font-mono mt-1">
-                  {education.gpa}
-                </Chip>
-              </div>
+          <div className={styles.card}>
+            <span className={styles.icon}>
+              <Icon name="graduation" size={22} />
+            </span>
+            <div className={styles.body}>
+              <h3 className={styles.degree}>{t(education.degree)}</h3>
+              <p className={styles.uni}>{education.university}</p>
+            </div>
+            <div className={styles.side}>
+              <p className="mono">{education.period}</p>
+              <p className={styles.gpa}>{education.gpa}</p>
             </div>
           </div>
         </Reveal>

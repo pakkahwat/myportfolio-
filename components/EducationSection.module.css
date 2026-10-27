@@ -1,24 +1,58 @@
-.eduCard {
-  background: #1c2330;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 22px 24px;
+.card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
 }
-.eduIcon {
-  background: rgba(245, 166, 35, 0.1);
-  border: 1px solid rgba(245, 166, 35, 0.25);
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  background: var(--accent-soft);
+  color: var(--accent-ink);
 }
-.eduDeg {
-  font-size: 1.05rem;
-  font-weight: 700;
+.body {
+  flex: 1;
+  min-width: 0;
+}
+.degree {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+.uni {
+  margin-top: 2px;
+  color: var(--muted);
+}
+.side {
+  text-align: right;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+.gpa {
+  margin-top: 4px;
+  font-weight: 600;
   color: var(--text);
 }
-.eduUni {
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  margin-top: 2px;
-}
-.eduYr {
-  font-size: 0.8rem;
-  color: var(--amber-dim);
+@media (max-width: 600px) {
+  .card {
+    flex-wrap: wrap;
+  }
+  .side {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    text-align: left;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+  .gpa {
+    margin-top: 0;
+  }
 }

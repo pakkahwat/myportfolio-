@@ -1,73 +1,62 @@
-.timeline {
-  margin-top: 8px;
-  position: relative;
-  padding-left: 28px;
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
-.timeline::before {
-  content: '';
-  position: absolute;
-  left: 4px;
-  top: 6px;
-  bottom: 6px;
-  width: 2px;
-  background: var(--line);
+.item {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 32px;
+  padding: 32px 0;
+  border-top: 1px solid var(--border);
 }
-.timelineItem {
-  position: relative;
-  padding-bottom: 40px;
+.item:first-child {
+  border-top: 0;
+  padding-top: 0;
 }
-.timelineItem:last-child {
-  padding-bottom: 0;
+.period {
+  padding-top: 3px;
+  font-size: 0.875rem;
+  color: var(--muted);
 }
-.dot {
-  position: absolute;
-  left: -28px;
-  top: 4px;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--surfaceVariant, #21262d);
-  border: 2px solid #0d1117;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.dotCurrent {
-  background: var(--amber);
-}
-.tlPulse {
-  display: block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #0d1117;
-}
-.jobRole {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: var(--text);
-}
-.jobCo {
-  font-size: 0.85rem;
+.role {
+  font-size: 1.25rem;
   font-weight: 600;
-  color: var(--amber-dim);
-  margin-top: 2px;
 }
-.periodChip {
-  color: var(--text-muted) !important;
+.company {
+  margin-top: 4px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--accent);
 }
 .bullets {
-  padding-left: 18px;
-  margin: 12px 0 0;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+  max-width: 760px;
 }
 .bullets li {
-  font-size: 0.875rem;
-  color: var(--text-muted);
-  line-height: 1.6;
+  position: relative;
+  padding-left: 18px;
+  font-size: 0.9375rem;
+  color: var(--text-2);
 }
-.bullets li::marker {
-  color: var(--amber);
+.bullets li + li {
+  margin-top: 8px;
+}
+.bullets li::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 0.72em;
+  width: 6px;
+  height: 1.5px;
+  background: var(--border-strong);
+}
+@media (max-width: 768px) {
+  .item {
+    grid-template-columns: 1fr;
+    gap: 6px;
+    padding: 28px 0;
+  }
 }

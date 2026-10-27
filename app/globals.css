@@ -1,337 +1,284 @@
 /* ============================================================
-   Design tokens + base (ported from app/assets/css/main.css)
+   Design tokens — light (default) and dark ([data-theme="dark"]).
+   Minimal / Swiss: one neutral scale, one accent (amber), one
+   status colour (green). Every text pair here meets WCAG 4.5:1.
    ============================================================ */
 :root {
-  --amber: #f5a623;
-  --amber-dim: #c47f0e;
-  --line: #21262d;
-  --text: #e6edf3;
-  --text-muted: #8b949e;
-  --text-dim: #484f58;
-  --green: #3fb950;
-  --blue: #58a6ff;
-  --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
-  --sans: 'Inter', system-ui, -apple-system, sans-serif;
+  color-scheme: light;
+  --bg: #f8fafc;
+  --surface: #ffffff;
+  --surface-2: #f1f5f9;
+  --text: #0f172a;
+  --text-2: #334155;
+  --muted: #475569;
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --accent: #b45309;
+  --accent-ink: #92400e;
+  --accent-soft: #fef3c7;
+  --success: #166534;
+  --success-dot: #16a34a;
+  --success-soft: #dcfce7;
+  --primary: #0f172a;
+  --on-primary: #ffffff;
+  --focus: #2563eb;
+  --header-bg: rgba(248, 250, 252, 0.85);
+  --shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -12px rgba(15, 23, 42, 0.12);
+
+  --sans: var(--font-inter), var(--font-thai), system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --container: 1120px;
+  --header-h: 64px;
 }
 
-* {
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface-2: #21262d;
+  --text: #f0f6fc;
+  --text-2: #c9d1d9;
+  --muted: #9da7b3;
+  --border: #262c36;
+  --border-strong: #3d444d;
+  --accent: #f5b83d;
+  --accent-ink: #f5b83d;
+  --accent-soft: rgba(245, 184, 61, 0.14);
+  --success: #56d364;
+  --success-dot: #3fb950;
+  --success-soft: rgba(63, 185, 80, 0.14);
+  --primary: #f0f6fc;
+  --on-primary: #0d1117;
+  --focus: #58a6ff;
+  --header-bg: rgba(13, 17, 23, 0.85);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 32px -16px rgba(0, 0, 0, 0.6);
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
 html {
   scroll-behavior: smooth;
-  /* Offset anchor targets so the sticky app bar doesn't cover headings */
-  scroll-padding-top: 84px;
+  scroll-padding-top: calc(var(--header-h) + 16px);
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
   margin: 0;
   font-family: var(--sans);
-  background: #080c10;
-  color: var(--text);
+  font-size: 1rem;
+  line-height: 1.6;
+  background: var(--bg);
+  color: var(--text-2);
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.font-mono {
-  font-family: var(--mono) !important;
-  font-feature-settings: 'liga' 0;
+/* Thai needs more room for stacked vowels/tone marks. */
+:lang(th) body,
+html:lang(th) body {
+  line-height: 1.75;
 }
 
-button,
-input {
-  font-family: inherit;
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  color: var(--text);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+p {
+  margin: 0;
 }
 
 a {
   color: inherit;
 }
 
-/* Scroll reveal */
-.reveal {
-  opacity: 0;
-  transform: translateY(18px);
-  transition:
-    opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: opacity, transform;
-}
-.reveal--in {
-  opacity: 1;
-  transform: none;
+button {
+  font: inherit;
+  color: inherit;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-  .reveal {
-    opacity: 1;
-    transform: none;
-    transition: none;
-  }
-}
-
-/* Terminal flourishes */
-.prompt::before {
-  content: '> ';
-  color: var(--amber);
-  opacity: 0.55;
-}
-
-/* Subtle blueprint grid used behind the hero */
-.grid-bg {
-  background-image:
-    linear-gradient(rgba(245, 166, 35, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(245, 166, 35, 0.035) 1px, transparent 1px);
-  background-size: 32px 32px;
-}
-
-/* Thin top accent bar */
-.accent-bar {
-  background: linear-gradient(90deg, var(--amber), #ff6b35, var(--amber));
-}
-
-/* Cursor glare overlay injected by the useTilt hook */
-.tilt-glare {
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  opacity: 0;
-  z-index: 2;
-  transition: opacity 0.25s ease;
-  background: radial-gradient(
-    circle at var(--mx, 50%) var(--my, 50%),
-    rgba(245, 166, 35, 0.16),
-    transparent 42%
-  );
-}
-
-/* Custom thin scrollbar to match the dark theme */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: #30363d #0d1117;
-}
-*::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-*::-webkit-scrollbar-track {
-  background: #0d1117;
-}
-*::-webkit-scrollbar-thumb {
-  background: #30363d;
-  border-radius: 6px;
-  border: 2px solid #0d1117;
-}
-*::-webkit-scrollbar-thumb:hover {
-  background: #3d444d;
+img {
+  max-width: 100%;
+  display: block;
 }
 
 ::selection {
-  background: rgba(245, 166, 35, 0.25);
-  color: #fff;
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.mono {
+  font-family: var(--mono);
+  font-feature-settings: 'liga' 0;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: 16px;
+  top: -48px;
+  z-index: 100;
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  background: var(--primary);
+  color: var(--on-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+.skip-link:focus {
+  top: 12px;
 }
 
 /* ============================================================
-   Layout primitives (ports of the Vuetify components/utilities
-   the original used — v-container / v-row / v-col / utility
-   classes)
+   Layout
    ============================================================ */
 .container {
   width: 100%;
+  max-width: var(--container);
   margin: 0 auto;
-  padding: 0 16px;
+  padding: 0 24px;
+}
+@media (max-width: 600px) {
+  .container {
+    padding: 0 16px;
+  }
 }
 
-.row {
-  display: flex;
-  flex-wrap: wrap;
-  margin: -12px;
+.section {
+  padding: 96px 0;
+  border-top: 1px solid var(--border);
 }
-.row.dense {
-  margin: -4px;
+@media (max-width: 768px) {
+  .section {
+    padding: 64px 0;
+  }
 }
-.row.dense > .col {
-  padding: 4px;
-}
-
-.col {
-  flex: 0 0 100%;
-  max-width: 100%;
-  padding: 12px;
-}
-
-.col-12 { flex-basis: 100%; max-width: 100%; }
-.col-6 { flex-basis: 50%; max-width: 50%; }
-.col-4 { flex-basis: 33.3333%; max-width: 33.3333%; }
-
-@media (min-width: 600px) {
-  .col-sm-3 { flex-basis: 25%; max-width: 25%; }
-}
-
-@media (min-width: 960px) {
-  .col-md-4 { flex-basis: 33.3333%; max-width: 33.3333%; }
-  .col-md-5 { flex-basis: 41.6667%; max-width: 41.6667%; }
-  .col-md-6 { flex-basis: 50%; max-width: 50%; }
-  .col-md-7 { flex-basis: 58.3333%; max-width: 58.3333%; }
-  .col-md-8 { flex-basis: 66.6667%; max-width: 66.6667%; }
-  .order-md-1 { order: 1; }
-  .order-md-2 { order: 2; }
-  .d-md-none { display: none !important; }
-  .d-md-flex { display: flex !important; }
-  .text-md-end { text-align: end; }
-  .py-md-14 { padding-top: 56px; padding-bottom: 56px; }
-  .py-md-16 { padding-top: 64px; padding-bottom: 64px; }
-}
-
-.order-1 { order: 1; }
-.order-2 { order: 2; }
-
-.row.align-center { align-items: center; }
-
-/* Generic utility classes (Vuetify-style helpers used across components) */
-.d-flex { display: flex; }
-.d-none { display: none; }
-.flex-wrap { flex-wrap: wrap; }
-.flex-column { flex-direction: column; }
-.flex-shrink-0 { flex-shrink: 0; }
-.align-center { align-items: center; }
-.align-end { align-items: flex-end; }
-.align-baseline { align-items: baseline; }
-.justify-space-between { justify-content: space-between; }
-.text-center { text-align: center; }
-.text-uppercase { text-transform: uppercase; }
-.h-100 { height: 100%; }
-
-.ga-1 { gap: 4px; }
-.ga-2 { gap: 8px; }
-.ga-3 { gap: 12px; }
-.ga-4 { gap: 16px; }
-
-.mb-1 { margin-bottom: 4px; }
-.mb-2 { margin-bottom: 8px; }
-.mb-3 { margin-bottom: 12px; }
-.mb-4 { margin-bottom: 16px; }
-.mb-5 { margin-bottom: 20px; }
-.mb-6 { margin-bottom: 24px; }
-.mb-10 { margin-bottom: 40px; }
-.mb-12 { margin-bottom: 48px; }
-.mt-1 { margin-top: 4px; }
-.mt-3 { margin-top: 12px; }
-.mt-5 { margin-top: 20px; }
-.mt-7 { margin-top: 28px; }
-.mt-auto { margin-top: auto; }
-.ml-2 { margin-left: 8px; }
-.ml-3 { margin-left: 12px; }
-.ml-auto { margin-left: auto; }
-.mr-1 { margin-right: 4px; }
-.mr-3 { margin-right: 12px; }
-.pb-12 { padding-bottom: 48px; }
-.py-0 { padding-top: 0; padding-bottom: 0; }
-.py-6 { padding-top: 24px; padding-bottom: 24px; }
-.py-10 { padding-top: 40px; padding-bottom: 40px; }
-.py-12 { padding-top: 48px; padding-bottom: 48px; }
 
 /* ============================================================
-   Small "component" primitives — chip / button / avatar /
-   progress bar (ports of the Vuetify components used)
+   Buttons
    ============================================================ */
-.v-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  border-radius: 8px;
-  font-size: 0.8rem;
-  line-height: 1;
-  white-space: nowrap;
-}
-.v-chip--small { padding: 6px 12px; font-size: 0.8rem; }
-.v-chip--x-small { padding: 4px 8px; font-size: 0.7rem; }
-.v-chip--tonal.v-chip--primary {
-  background: rgba(245, 166, 35, 0.14);
-  color: var(--amber);
-}
-.v-chip--outlined {
-  background: transparent;
-  border: 1px solid var(--line);
-  color: var(--text);
-}
-.v-chip--flat.v-chip--primary {
-  background: var(--amber);
-  color: #0d1117;
-}
-
-.v-btn {
+.btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-  font-weight: 500;
-  font-size: 0.85rem;
-  letter-spacing: 0.01em;
-  padding: 10px 20px;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, color 0.15s ease;
-}
-.v-btn--small { padding: 8px 14px; font-size: 0.78rem; }
-.v-btn--flat.v-btn--primary {
-  background: var(--amber);
-  color: #0d1117;
-}
-.v-btn--flat.v-btn--primary:hover { background: #ffb840; }
-.v-btn--outlined.v-btn--primary {
-  background: transparent;
-  color: var(--amber);
-  border: 1.5px solid rgba(245, 166, 35, 0.55);
-}
-.v-btn--outlined.v-btn--primary:hover {
-  background: rgba(245, 166, 35, 0.08);
-}
-.v-btn--text {
-  background: transparent;
-  color: var(--amber);
-  padding: 8px;
-}
-.v-btn--icon {
-  padding: 8px;
-  border-radius: 50%;
-}
-.v-icon-inline {
-  font-size: 1.05em;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  font-size: 0.9375rem;
+  font-weight: 600;
   line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease,
+    transform 0.18s ease;
+}
+.btn:active {
+  transform: translateY(1px);
+}
+.btn-primary {
+  background: var(--primary);
+  color: var(--on-primary);
+}
+.btn-primary:hover {
+  background: color-mix(in srgb, var(--primary) 86%, var(--bg));
+}
+.btn-secondary {
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+.btn-secondary:hover {
+  border-color: var(--text);
+}
+.btn-sm {
+  min-height: 36px;
+  padding: 0 14px;
+  font-size: 0.875rem;
 }
 
-.v-avatar {
-  position: relative;
+/* Small rounded tag used for tech names */
+.chip {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-.v-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.v-progress-linear {
-  position: relative;
-  width: 100%;
+  padding: 3px 10px;
   border-radius: 999px;
-  overflow: hidden;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text-2);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  white-space: nowrap;
 }
-.v-progress-linear__bar {
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  transition: width 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+.chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 /* ============================================================
-   Fonts (Google Fonts, matching the original <link> tags)
+   Scroll reveal — only when JS is running (html.js, set before
+   paint by the inline script in layout.tsx), so content is never
+   hidden without it. Subtle: 12px rise, 350ms.
    ============================================================ */
+.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.35s ease-out, transform 0.35s ease-out;
+}
+.js [data-reveal].reveal--in {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .js [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

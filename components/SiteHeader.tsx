@@ -1,139 +1,155 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { navItems, profile } from '@/lib/resume'
+import { navItems, profile, ui } from '@/lib/resume'
 import { useLocale } from '@/lib/LocaleContext'
+import { useT } from '@/lib/useT'
 import { Icon } from './ui'
 import styles from './SiteHeader.module.css'
 
+type Theme = 'light' | 'dark'
+
+function applyTheme(theme: Theme) {
+  const root = document.documentElement
+  if (theme === 'dark') root.dataset.theme = 'dark'
+  else delete root.dataset.theme
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#0d1117' : '#f8fafc')
+  try {
+    localStorage.setItem('theme', theme)
+  } catch {
+    // Private mode / blocked storage: the switch still works for this visit.
+  }
+}
+
 export default function SiteHeader() {
   const { locale, setLocale } = useLocale()
+  const { t } = useT()
   const [drawer, setDrawer] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const [progress, setProgress] = useState(0)
+  const [active, setActive] = useState<string>('')
+  const [theme, setTheme] = useState<Theme>('light')
 
   useEffect(() => {
-    const onScroll = () => {
-      setScrolled(window.scrollY > 24)
-      const doc = document.documentElement
-      const max = doc.scrollHeight - doc.clientHeight
-      setProgress(max > 0 ? Math.min(1, window.scrollY / max) : 0)
-    }
+    setTheme(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light')
+
+    const onScroll = () => setScrolled(window.scrollY > 8)
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+
+    // Highlight the nav item for the section in the middle of the viewport.
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) if (e.isIntersecting) setActive(e.target.id)
+      },
+      { rootMargin: '-45% 0px -50% 0px' },
+    )
+    for (const item of navItems) {
+      const el = document.getElementById(item.id)
+      if (el) observer.observe(el)
+    }
+
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      observer.disconnect()
+    }
   }, [])
 
-  function go(id: string) {
-    setDrawer(false)
-    const el = document.getElementById(id)
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  // Close the drawer on Escape.
+  useEffect(() => {
+    if (!drawer) return
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setDrawer(false)
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [drawer])
+
+  function toggleTheme() {
+    const next: Theme = theme === 'dark' ? 'light' : 'dark'
+    setTheme(next)
+    applyTheme(next)
   }
 
+  const langSwitch = (
+    <div className={styles.lang} role="group" aria-label={t(ui.language)}>
+      <button type="button" aria-pressed={locale === 'en'} onClick={() => setLocale('en')}>
+        EN
+      </button>
+      <button type="button" aria-pressed={locale === 'th'} onClick={() => setLocale('th')}>
+        ไทย
+      </button>
+    </div>
+  )
+
+  const themeButton = (
+    <button
+      type="button"
+      className={styles.iconBtn}
+      onClick={toggleTheme}
+      aria-label={t(theme === 'dark' ? ui.themeToLight : ui.themeToDark)}
+      title={t(theme === 'dark' ? ui.themeToLight : ui.themeToDark)}
+    >
+      <Icon name={theme === 'dark' ? 'sun' : 'moon'} size={18} />
+    </button>
+  )
+
   return (
-    <>
-      <header
-        className={`${styles.siteBar} ${scrolled ? styles.siteBarScrolled : ''}`}
-        style={{ boxShadow: scrolled ? undefined : 'none' }}
-      >
-        <div className={`accent-bar ${styles.accentLine}`} />
-        <div
-          className={styles.scrollProgress}
-          style={{ transform: `scaleX(${progress})` }}
-          aria-hidden="true"
-        />
+    <header className={`${styles.bar} ${scrolled || drawer ? styles.barScrolled : ''}`}>
+      <div className={`container ${styles.inner}`}>
+        <a href="#top" className={styles.brand} onClick={() => setDrawer(false)}>
+          {t(profile.name)}
+        </a>
 
-        <div className={styles.inner}>
-          {/* Brand */}
-          <button className={`${styles.brand} font-mono`} type="button" onClick={() => go('top')}>
-            <span className={styles.brandBracket}>{'{'}</span>
-            <span className={styles.brandName}>{profile.initials}</span>
-            <span className={styles.brandBracket}>{'}'}</span>
-          </button>
-
-          <div className={styles.spacer} />
-
-          {/* Desktop nav */}
-          <nav className={styles.desktopNav}>
-            {navItems.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                className={`${styles.navLink} font-mono`}
-                onClick={() => go(item.id)}
-              >
-                {item.label}
-              </button>
-            ))}
-            <div className={`${styles.langSwitch} font-mono`} role="group" aria-label="Language">
-              <button
-                className={locale === 'en' ? styles.langOn : ''}
-                onClick={() => setLocale('en')}
-              >
-                EN
-              </button>
-              <span className={styles.langSep}>/</span>
-              <button
-                className={locale === 'th' ? styles.langOn : ''}
-                onClick={() => setLocale('th')}
-              >
-                ไทย
-              </button>
-            </div>
-            <button
-              className={`v-btn v-btn--flat v-btn--primary v-btn--small font-mono ${styles.ctaBtn}`}
-              onClick={() => go('contact')}
+        <nav className={styles.nav} aria-label="Primary">
+          {navItems.map((item) => (
+            <a
+              key={item.id}
+              href={`#${item.id}`}
+              className={`${styles.navLink} ${active === item.id ? styles.navLinkOn : ''}`}
+              aria-current={active === item.id ? 'true' : undefined}
             >
-              get_in_touch
-            </button>
-          </nav>
+              {t(item.label)}
+            </a>
+          ))}
+        </nav>
 
-          {/* Mobile: language switch + menu toggle */}
-          <div
-            className={`${styles.langSwitch} font-mono ${styles.mobileLang}`}
-            role="group"
-            aria-label="Language"
-          >
-            <button
-              className={locale === 'en' ? styles.langOn : ''}
-              onClick={() => setLocale('en')}
-            >
-              EN
-            </button>
-            <span className={styles.langSep}>/</span>
-            <button
-              className={locale === 'th' ? styles.langOn : ''}
-              onClick={() => setLocale('th')}
-            >
-              ไทย
-            </button>
-          </div>
+        <div className={styles.tools}>
+          <div className={styles.langInBar}>{langSwitch}</div>
+          {/* Phones: one button that flips to the other language */}
           <button
-            className={styles.menuBtn}
-            aria-label="Menu"
+            type="button"
+            className={`${styles.iconBtn} ${styles.langCompact}`}
+            onClick={() => setLocale(locale === 'en' ? 'th' : 'en')}
+            aria-label={`${t(ui.language)}: ${locale === 'en' ? 'ไทย' : 'English'}`}
+            lang={locale === 'en' ? 'th' : 'en'}
+          >
+            {locale === 'en' ? 'ไทย' : 'EN'}
+          </button>
+          {themeButton}
+          <button
+            type="button"
+            className={`${styles.iconBtn} ${styles.menuBtn}`}
+            aria-label={t(ui.menu)}
+            aria-expanded={drawer}
+            aria-controls="mobile-nav"
             onClick={() => setDrawer((d) => !d)}
           >
-            <Icon icon="mdi-menu" size={22} />
+            <Icon name={drawer ? 'close' : 'menu'} size={20} />
           </button>
         </div>
-      </header>
+      </div>
 
-      {/* Mobile drawer */}
-      <div
-        className={`${styles.drawerBackdrop} ${drawer ? styles.drawerBackdropOpen : ''}`}
-        onClick={() => setDrawer(false)}
-      />
-      <nav className={`${styles.drawer} ${drawer ? styles.drawerOpen : ''}`}>
+      <nav
+        id="mobile-nav"
+        className={`${styles.drawer} ${drawer ? styles.drawerOpen : ''}`}
+        aria-label="Mobile"
+        hidden={!drawer}
+      >
         {navItems.map((item) => (
-          <button
-            key={item.id}
-            className={`${styles.drawerItem} font-mono`}
-            onClick={() => go(item.id)}
-          >
-            <span className="prompt">{item.label}</span>
-          </button>
+          <a key={item.id} href={`#${item.id}`} className={styles.drawerItem} onClick={() => setDrawer(false)}>
+            {t(item.label)}
+            <Icon name="arrowRight" size={16} />
+          </a>
         ))}
       </nav>
-    </>
+    </header>
   )
 }

@@ -1,60 +1,74 @@
 'use client'
 
-import type { Project } from '@/lib/resume'
-import { projects } from '@/lib/resume'
+import type { Project, ProjectGroup } from '@/lib/resume'
+import { projects, projectGroups, ui } from '@/lib/resume'
 import { useT, type Localized } from '@/lib/useT'
-import { useReveal, useTilt } from '@/lib/directives'
-import { mergeRefs } from '@/lib/mergeRefs'
-import SectionLabel from './SectionLabel'
+import SectionHeader from './SectionHeader'
+import Reveal from './Reveal'
+import { Icon } from './ui'
 import styles from './ProjectsSection.module.css'
 
-function ProjectCard({
-  proj,
-  index,
-  t,
-}: {
-  proj: Project
-  index: number
-  t: (v: Localized) => string
-}) {
-  const revealRef = useReveal<HTMLDivElement>(index * 90)
-  const tiltRef = useTilt<HTMLDivElement>(7)
+// Grid per group: live apps three across, company systems two across (their
+// tag lists are long), early work three across as compact cards.
+const gridClass: Record<ProjectGroup, string> = {
+  shipped: styles.grid3,
+  work: styles.grid2,
+  early: styles.grid3,
+}
+
+function ProjectCard({ proj, t }: { proj: Project; t: (v: Localized) => string }) {
+  const isLive = proj.group === 'shipped'
+  const compact = proj.group === 'early'
 
   return (
-    <div ref={mergeRefs(revealRef, tiltRef)} className={`${styles.projCard} h-100`}>
-      <div className={styles.projName}>{proj.name}</div>
-      <div className={styles.projDesc}>{t(proj.desc)}</div>
-
-      <div className="d-flex flex-wrap ga-1 mb-3">
-        {proj.tags.map((tag) => (
-          <span key={tag} className={`${styles.pt} font-mono`}>
-            {tag}
+    <article className={`${styles.card} ${compact ? styles.cardCompact : ''}`}>
+      <div className={styles.cardTop}>
+        <span className={styles.meta}>{t(proj.meta)}</span>
+        {proj.badge && (
+          <span className={`${styles.badge} ${isLive ? styles.badgeLive : ''}`}>
+            {isLive && <span className={styles.liveDot} aria-hidden="true" />}
+            {t(proj.badge)}
           </span>
-        ))}
+        )}
       </div>
 
-      <div className={styles.outcome}>
-        <span className={`${styles.ol} font-mono`}>// outcome</span>
-        <span>{t(proj.outcome)}</span>
-      </div>
+      <h4 className={styles.name}>{t(proj.name)}</h4>
+      <p className={styles.desc}>{t(proj.desc)}</p>
+
+      {proj.highlight && (
+        <p className={styles.metric}>
+          <span className={`${styles.metricValue} mono`}>{proj.highlight.value}</span>
+          <span className={styles.metricLabel}>{t(proj.highlight.label)}</span>
+        </p>
+      )}
+
+      <ul className={`chip-list ${styles.tags}`} aria-label="Tech">
+        {proj.tags.map((tag) => (
+          <li key={tag} className="chip">
+            {tag}
+          </li>
+        ))}
+      </ul>
+
+      {proj.outcome && (
+        <p className={styles.outcome}>
+          <span className={styles.outcomeLabel}>{t(ui.outcome)}</span>
+          {t(proj.outcome)}
+        </p>
+      )}
 
       {proj.links && proj.links.length > 0 && (
-        <div className="d-flex flex-wrap ga-2 mt-3">
+        <div className={styles.links}>
           {proj.links.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`${styles.projLink} font-mono`}
-            >
-              {link.label}
-              <span aria-hidden="true">↗</span>
+            <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer" className={styles.link}>
+              <Icon name={link.kind === 'github' ? 'github' : 'globe'} size={16} />
+              {link.kind === 'github' ? 'GitHub' : t(ui.liveSite)}
+              <Icon name="arrowUpRight" size={14} className={styles.linkArrow} />
             </a>
           ))}
         </div>
       )}
-    </div>
+    </article>
   )
 }
 
@@ -62,17 +76,36 @@ export default function ProjectsSection() {
   const { t } = useT()
 
   return (
-    <section id="projects" className={`py-12 py-md-16 ${styles.projectsBand}`}>
-      <div className="container" style={{ maxWidth: 1080 }}>
-        <SectionLabel label="key_projects" />
+    <section id="projects" className="section" aria-labelledby="projects-title">
+      <div className="container">
+        <SectionHeader id="projects" />
 
-        <div className="row">
-          {projects.map((proj, i) => (
-            <div key={proj.name} className="col col-12 col-md-4">
-              <ProjectCard proj={proj} index={i} t={t} />
+        {projectGroups.map((group) => {
+          const items = projects.filter((p) => p.group === group.id)
+          return (
+            <div key={group.id} className={styles.group}>
+              <Reveal>
+                <div className={styles.groupHead}>
+                  <h3 className={styles.groupTitle}>
+                    {t(group.label)}
+                    <span className={styles.groupCount}>{items.length}</span>
+                  </h3>
+                  <p className={styles.groupSub}>{t(group.sub)}</p>
+                </div>
+              </Reveal>
+
+              <div className={gridClass[group.id]}>
+                {items.map((proj, i) => (
+                  <Reveal key={`${group.id}-${i}`} delay={i * 60}>
+                    <div className={styles.cell}>
+                      <ProjectCard proj={proj} t={t} />
+                    </div>
+                  </Reveal>
+                ))}
+              </div>
             </div>
-          ))}
-        </div>
+          )
+        })}
       </div>
     </section>
   )
